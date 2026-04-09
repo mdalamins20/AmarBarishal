@@ -41,48 +41,49 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBkO2jr6sJogtlXEw42ud0RGVxp2b1yyqY',
-    appId: '1:1003589281276:web:91ad84af4afc163035be79',
-    messagingSenderId: '1003589281276',
-    projectId: 'my-barishal-new',
-    authDomain: 'my-barishal-new.firebaseapp.com',
-    storageBucket: 'my-barishal-new.firebasestorage.app',
-    measurementId: 'G-SPMXYS6L0D',
+    apiKey: 'AIzaSyBJ-fgHX4GXTemsgJwpnDk1d2_Ek7Ni0uU',
+    appId: '1:833586579373:web:ee6f65dd132f8eeaa14324',
+    messagingSenderId: '833586579373',
+    projectId: 'my-project-433d3',
+    authDomain: 'my-project-433d3.firebaseapp.com',
+    storageBucket: 'my-project-433d3.firebasestorage.app',
+    measurementId: 'G-CS051NV4XH',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyC1w6r4YeNWsGFMEInFD71CzkXgDJdoNRU',
-    appId: '1:1003589281276:android:6ca5209ce0229c6935be79',
-    messagingSenderId: '1003589281276',
-    projectId: 'my-barishal-new',
-    storageBucket: 'my-barishal-new.firebasestorage.app',
+    apiKey: 'AIzaSyCQ8DOF0OHup0tZY8NGjjtjb-IRmYj0hB0',
+    appId: '1:833586579373:android:588a150c759ea179a14324',
+    messagingSenderId: '833586579373',
+    projectId: 'my-project-433d3',
+    storageBucket: 'my-project-433d3.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyD2VaI9liCuGCbfECpG4eK5IXBTHhEQg1E',
-    appId: '1:1003589281276:ios:a66ee8be348f09e935be79',
-    messagingSenderId: '1003589281276',
-    projectId: 'my-barishal-new',
-    storageBucket: 'my-barishal-new.firebasestorage.app',
+    apiKey: 'AIzaSyBeMI4eCZv46XMjbq7k_Xq7RO2by3ijjUE',
+    appId: '1:833586579373:ios:70848349a7c338e4a14324',
+    messagingSenderId: '833586579373',
+    projectId: 'my-project-433d3',
+    storageBucket: 'my-project-433d3.firebasestorage.app',
     iosBundleId: 'com.example.myBarishalNew',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyD2VaI9liCuGCbfECpG4eK5IXBTHhEQg1E',
-    appId: '1:1003589281276:ios:a66ee8be348f09e935be79',
-    messagingSenderId: '1003589281276',
-    projectId: 'my-barishal-new',
-    storageBucket: 'my-barishal-new.firebasestorage.app',
+    apiKey: 'AIzaSyBeMI4eCZv46XMjbq7k_Xq7RO2by3ijjUE',
+    appId: '1:833586579373:ios:70848349a7c338e4a14324',
+    messagingSenderId: '833586579373',
+    projectId: 'my-project-433d3',
+    storageBucket: 'my-project-433d3.firebasestorage.app',
     iosBundleId: 'com.example.myBarishalNew',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyBkO2jr6sJogtlXEw42ud0RGVxp2b1yyqY',
-    appId: '1:1003589281276:web:62f5cfb0b42a13b535be79',
-    messagingSenderId: '1003589281276',
-    projectId: 'my-barishal-new',
-    authDomain: 'my-barishal-new.firebaseapp.com',
-    storageBucket: 'my-barishal-new.firebasestorage.app',
-    measurementId: 'G-1YM9XHPT1G',
+    apiKey: 'AIzaSyBJ-fgHX4GXTemsgJwpnDk1d2_Ek7Ni0uU',
+    appId: '1:833586579373:web:4d9f3202d622e72aa14324',
+    messagingSenderId: '833586579373',
+    projectId: 'my-project-433d3',
+    authDomain: 'my-project-433d3.firebaseapp.com',
+    storageBucket: 'my-project-433d3.firebasestorage.app',
+    measurementId: 'G-16T2Q306CS',
   );
+
 }

@@ -34,7 +34,7 @@ class AppDrawer extends StatelessWidget {
         builder: (context, snapshot) {
           final user = snapshot.data;
           // 🔴 জরুরি: এখানে আপনার নিজের আসল অ্যাডমিন User ID (UID) দিন
-          final bool isAdmin = user != null && user.uid == 'YOUR_ADMIN_UID_HERE';
+          final bool isAdmin = user != null && user.uid == 'u8bcTPpfyBddB52zSChZFF9Fldj2';
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,

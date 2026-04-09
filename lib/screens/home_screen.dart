@@ -16,19 +16,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final List<Map<String, dynamic>> _localCategories = [
-    {'id': 'hospital', 'name': 'হাসপাতাল', 'icon': 'hospital', 'color': '#FF5252'},
-    {'id': 'police', 'name': 'পুলিশ', 'icon': 'police', 'color': '#448AFF'},
-    {'id': 'ambulance', 'name': 'অ্যাম্বুলেন্স', 'icon': 'ambulance', 'color': '#00BFA5'},
-    {'id': 'fire_service', 'name': 'ফায়ার সার্ভিস', 'icon': 'fire_service', 'color': '#FF9100'},
-    {'id': 'landscape', 'name': 'দর্শনীয় স্থান', 'icon': 'landscape', 'color': '#69F0AE'},
-    {'id': 'info', 'name': 'তথ্য', 'icon': 'info', 'color': '#40C4FF'},
-    {'id': 'news', 'name': 'পত্রিকা', 'icon': 'news', 'color': '#B388FF'},
-    {'id': 'library', 'name': 'লাইব্রেরি', 'icon': 'library', 'color': '#FFAB40'},
-    {'id': 'hotel', 'name': 'আবাসিক হোটেল', 'icon': 'hotel', 'color': '#18FFFF'},
-    {'id': 'upazila', 'name': 'উপজেলা পরিচিতি', 'icon': 'info', 'color': '#FF4081'},
-  ];
-
+  // Local categories removed, loading straight from Firestore
   void _onCategoryTap(String categoryId, String categoryName, Map<String, dynamic> categoryData) {
     if (categoryName == "উপজেলা পরিচিতি" || categoryId == 'upazila') {
       Navigator.push(context, MaterialPageRoute(builder: (context) => UpazilaListScreen(categoryId: categoryId, categoryTitle: categoryName)));
@@ -117,6 +105,10 @@ class _HomeScreenState extends State<HomeScreen> {
           child: StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance.collection('categories').orderBy('order').snapshots(),
             builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
               List<Map<String, dynamic>> itemsToShow = [];
 
               if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
@@ -125,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ...doc.data() as Map<String, dynamic>
                 }).toList();
               } else {
-                itemsToShow = _localCategories;
+                return const Center(child: Text('কোনো ক্যাটাগরি ডাটাবেসে নেই!'));
               }
 
               return LayoutBuilder(

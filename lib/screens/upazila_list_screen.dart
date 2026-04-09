@@ -14,20 +14,7 @@ class UpazilaListScreen extends StatelessWidget {
     required this.categoryTitle,
   });
 
-  // লোকাল ডাটাবেজ (যাতে ইন্টারনেট না থাকলেও গঠন ঠিক থাকে)
-  final List<Map<String, dynamic>> _localUpazilas = const [
-    {'id': 'agailjhara', 'name': 'আগৈলঝাড়া'},
-    {'id': 'babuganj', 'name': 'বাবুগঞ্জ'},
-    {'id': 'bakerganj', 'name': 'বাকেরগঞ্জ'},
-    {'id': 'banaripara', 'name': 'বানারীপাড়া'},
-    {'id': 'gaurnadi', 'name': 'গৌরনদী'},
-    {'id': 'hizla', 'name': 'হিজলা'},
-    {'id': 'sadar', 'name': 'বরিশাল সদর'},
-    {'id': 'mehendiganj', 'name': 'মেহেন্দিগঞ্জ'},
-    {'id': 'muladi', 'name': 'মুলাদী'},
-    {'id': 'wazirpur', 'name': 'উজিরপুর'},
-  ];
-
+  // Local upazilas removed, loaded fully from DB.
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
@@ -64,17 +51,18 @@ class UpazilaListScreen extends StatelessWidget {
                 .collection('upazilas')
                 .snapshots(),
             builder: (context, snapshot) {
-              List<Map<String, dynamic>> upazilasToShow = [];
-
-              if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
-                upazilasToShow = snapshot.data!.docs.map((doc) => {
-                  'id': doc.id,
-                  'name': (doc.data() as Map<String, dynamic>)['name'] ?? 'নাম নেই'
-                }).toList();
-              } else {
-                upazilasToShow = _localUpazilas;
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
               }
 
+              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                return const Center(child: Text('কোনো উপজেলা ডাটাবেসে নেই!'));
+              }
+
+              List<Map<String, dynamic>> upazilasToShow = snapshot.data!.docs.map((doc) => {
+                'id': doc.id,
+                'name': (doc.data() as Map<String, dynamic>)['name'] ?? 'নাম নেই'
+              }).toList();
               return AnimationLimiter(
                 child: ListView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),

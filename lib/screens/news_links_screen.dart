@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:my_barishal_new/screens/webview_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:io' show Platform;
@@ -9,37 +10,9 @@ import 'dart:io' show Platform;
 class NewsLinksScreen extends StatelessWidget {
   const NewsLinksScreen({super.key});
 
-  final List<Map<String, String>> newsChannels = const [
-    {
-      'title': 'প্রথম আলো - বরিশাল',
-      'url': 'https://www.prothomalo.com/topic/%E0%A6%AC%E0%A6%B0%E0%A6%BF%E0%A6%B6%E0%A6%BE%E0%A6%B2',
-    },
-    {
-      'title': 'BD News 24 - বরিশাল',
-      'url': 'https://www.news24bd.tv/search?cx=008012374219124743477%3Auymq7nud2js&cof=FORID%3A10&ie=UTF-8&q=%E0%A6%AC%E0%A6%B0%E0%A6%BF%E0%A6%B6%E0%A6%BE%E0%A6%B2',
-    },
-    {
-      'title': 'দ্য ডেইলি স্টার',
-      'url': 'https://bangla.thedailystar.net/',
-    },
-    {
-      'title': 'বরিশাল টাইমস',
-      'url': 'https://www.barishaltimes.com/',
-    },
-    {
-      'title': 'যুগান্তর - বরিশাল',
-      'url': 'https://www.jugantor.com/country-news/barishal',
-    },
-    {
-      'title': 'সমকাল - বরিশাল',
-      'url': 'https://samakal.com/whole-country/barishal',
-    },
-  ];
-
   void _openNewsLink(BuildContext context, String title, String url) async {
     bool useUrlLauncher = kIsWeb;
     
-    // ওয়েব না হলে ডেস্কটপের ক্ষেত্রে ব্রাউজারে খুলবে
     if (!kIsWeb) {
       if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
         useUrlLauncher = true;
@@ -93,106 +66,124 @@ class NewsLinksScreen extends StatelessWidget {
           ),
         ),
         child: SafeArea(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              int crossAxisCount = (constraints.maxWidth > 800) ? 4 : (constraints.maxWidth > 500) ? 3 : 2;
-              
-              return AnimationLimiter(
-                child: GridView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: crossAxisCount,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                    childAspectRatio: 1.4,
-                  ),
-                  itemCount: newsChannels.length,
-                  itemBuilder: (context, index) {
-                    final channel = newsChannels[index];
-                    final title = channel['title']!;
-                    final url = channel['url']!;
-                    
-                    // খবরের আইকনের জন্য একটি নির্দিষ্ট সুন্দর রং
-                    final Color baseColor = const Color(0xFF512DA8); // Deep Purple
-                    final Color iconColor = isDarkMode ? Colors.purpleAccent : Color.lerp(baseColor, Colors.black, 0.45)!;
+          child: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance.collection('news_links').orderBy('order').snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-                    return AnimationConfiguration.staggeredGrid(
-                      position: index,
-                      duration: const Duration(milliseconds: 600),
-                      columnCount: crossAxisCount,
-                      child: ScaleAnimation(
-                        child: FadeInAnimation(
-                          child: InkWell(
-                            onTap: () => _openNewsLink(context, title, url),
-                            borderRadius: BorderRadius.circular(20),
-                            child: Container(
-                              decoration: BoxDecoration(
+              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                return const Center(child: Text('কোনো পত্রিকা পাওয়া যায়নি!'));
+              }
+
+              final newsDocs = snapshot.data!.docs;
+
+              return LayoutBuilder(
+                builder: (context, constraints) {
+                  int crossAxisCount = (constraints.maxWidth > 800) ? 4 : (constraints.maxWidth > 500) ? 3 : 2;
+                  
+                  return AnimationLimiter(
+                    child: GridView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: crossAxisCount,
+                        crossAxisSpacing: 16,
+                        mainAxisSpacing: 16,
+                        childAspectRatio: 1.4,
+                      ),
+                      itemCount: newsDocs.length,
+                      itemBuilder: (context, index) {
+                        final data = newsDocs[index].data() as Map<String, dynamic>;
+                        final title = data['title'] ?? 'সংবাদপত্র';
+                        final url = data['url'] ?? '';
+                        
+                        final Color baseColor = const Color(0xFF512DA8);
+                        final Color iconColor = isDarkMode ? Colors.purpleAccent : Color.lerp(baseColor, Colors.black, 0.45)!;
+
+                        return AnimationConfiguration.staggeredGrid(
+                          position: index,
+                          duration: const Duration(milliseconds: 600),
+                          columnCount: crossAxisCount,
+                          child: ScaleAnimation(
+                            child: FadeInAnimation(
+                              child: InkWell(
+                                onTap: () {
+                                  if (url.toString().isNotEmpty) {
+                                    _openNewsLink(context, title, url);
+                                  }
+                                },
                                 borderRadius: BorderRadius.circular(20),
-                                gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    baseColor.withOpacity(isDarkMode ? 0.3 : 0.15),
-                                    baseColor.withOpacity(isDarkMode ? 0.1 : 0.05),
-                                  ],
-                                ),
-                                border: Border.all(
-                                  color: baseColor.withOpacity(isDarkMode ? 0.6 : 0.4),
-                                  width: 1.5,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: baseColor.withOpacity(0.15),
-                                    blurRadius: 15,
-                                    spreadRadius: 1,
-                                  )
-                                ],
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(20),
-                                child: BackdropFilter(
-                                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.all(12),
-                                        decoration: BoxDecoration(
-                                          color: baseColor.withOpacity(isDarkMode ? 0.2 : 0.15),
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: Icon(
-                                          Icons.newspaper_rounded, // সুন্দর নিউজ আইকন
-                                          size: 24, 
-                                          color: iconColor,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 12),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                                        child: Text(
-                                          title,
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 14,
-                                            color: isDarkMode ? Colors.white.withOpacity(0.9) : Colors.black87,
-                                          ),
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                      colors: [
+                                        baseColor.withOpacity(isDarkMode ? 0.3 : 0.15),
+                                        baseColor.withOpacity(isDarkMode ? 0.1 : 0.05),
+                                      ],
+                                    ),
+                                    border: Border.all(
+                                      color: baseColor.withOpacity(isDarkMode ? 0.6 : 0.4),
+                                      width: 1.5,
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: baseColor.withOpacity(0.15),
+                                        blurRadius: 15,
+                                        spreadRadius: 1,
+                                      )
                                     ],
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: BackdropFilter(
+                                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.all(12),
+                                            decoration: BoxDecoration(
+                                              color: baseColor.withOpacity(isDarkMode ? 0.2 : 0.15),
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: Icon(
+                                              Icons.newspaper_rounded,
+                                              size: 24, 
+                                              color: iconColor,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 12),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                                            child: Text(
+                                              title,
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 14,
+                                                color: isDarkMode ? Colors.white.withOpacity(0.9) : Colors.black87,
+                                              ),
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
+                        );
+                      },
+                    ),
+                  );
+                },
               );
             },
           ),
