@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "1003589281276",
-    "project_id": "my-barishal-new",
-    "storage_bucket": "my-barishal-new.firebasestorage.app"
+    "project_number": "833586579373",
+    "project_id": "my-project-433d3",
+    "storage_bucket": "my-project-433d3.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1003589281276:android:6ca5209ce0229c6935be79",
+        "mobilesdk_app_id": "1:833586579373:android:6f6c5d6af71a67f2a14324",
         "android_client_info": {
-          "package_name": "com.example.my_barishal_new"
+          "package_name": "com.alamin.amarbarishal"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyC1w6r4YeNWsGFMEInFD71CzkXgDJdoNRU"
+          "current_key": "AIzaSyCQ8DOF0OHup0tZY8NGjjtjb-IRmYj0hB0"
         }
       ],
       "services": {

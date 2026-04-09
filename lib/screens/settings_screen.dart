@@ -38,6 +38,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       await launchUrl(Uri.parse(whatsappUrl),
           mode: LaunchMode.externalApplication);
     } else {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("আপনার ফোনে WhatsApp ইনস্টল করা নেই।")),
       );

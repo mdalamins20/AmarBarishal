@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -24,11 +25,8 @@ class ItemDetailScreen extends StatelessWidget {
     }
   }
 
-  // *** এই ফাংশনটি আপডেট করা হয়েছে ***
   Future<void> _launchGoogleMaps(String mapUrl, BuildContext context) async {
-    // এখন এটি সরাসরি আপনার দেওয়া লিংক ব্যবহার করবে
     final Uri mapUri = Uri.parse(mapUrl);
-
     if (await canLaunchUrl(mapUri)) {
       await launchUrl(mapUri, mode: LaunchMode.externalApplication);
     } else {
@@ -42,54 +40,99 @@ class ItemDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final name = itemData['name'] ?? 'নাম পাওয়া যায়নি';
     final address = itemData['address'] ?? 'ঠিকানা পাওয়া যায়নি';
     final phone = itemData['phone'] ?? '';
     final headmaster = itemData['headmaster'] ?? 'পাওয়া যায়নি';
-    final mapLink = itemData['mapLink'] ?? ''; // <-- নতুন: ম্যাপ লিংক আনা হচ্ছে
+    final mapLink = itemData['mapLink'] ?? '';
 
     final bool isSchoolCollege = categoryId == 'schoolCollege';
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: Text(name),
+        flexibleSpace: ClipRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+            child: Container(color: Colors.transparent),
+          ),
+        ),
+        backgroundColor: isDarkMode ? Colors.black.withOpacity(0.4) : Colors.white.withOpacity(0.4),
+        elevation: 0,
+        title: Text(name, style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
+        iconTheme: IconThemeData(color: isDarkMode ? Colors.white : Colors.black),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Card(
-          elevation: 5,
-          shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-          child: Padding(
+      body: Container(
+        height: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: isDarkMode 
+                ? [const Color(0xFF151928), const Color(0xFF283149)]
+                : [const Color(0xFFE0EAFC), const Color(0xFFCFDEF3)],
+          ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildInfoSection(
-                  icon: Icons.location_on,
-                  color: Colors.blue,
-                  title: 'ঠিকানা',
-                  content: address,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                gradient: LinearGradient(
+                  colors: isDarkMode 
+                    ? [Colors.white.withOpacity(0.05), Colors.white.withOpacity(0.02)]
+                    : [Colors.white.withOpacity(0.8), Colors.white.withOpacity(0.4)],
                 ),
-                const Divider(height: 32),
-                if (isSchoolCollege) ...[
-                  _buildInfoSection(
-                    icon: Icons.person,
-                    color: Colors.teal,
-                    title: 'প্রধান শিক্ষক',
-                    content: headmaster,
+                border: Border.all(color: isDarkMode ? Colors.white12 : Colors.white, width: 1.5),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 15,
+                    spreadRadius: 2,
+                  )
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                  child: Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildInfoSection(
+                          icon: Icons.location_on_rounded,
+                          color: isDarkMode ? Colors.blueAccent : Colors.blue.shade700,
+                          title: 'ঠিকানা',
+                          content: address,
+                          isDarkMode: isDarkMode,
+                        ),
+                        if (isSchoolCollege) ...[
+                          Divider(height: 32, color: isDarkMode ? Colors.white24 : Colors.black12),
+                          _buildInfoSection(
+                            icon: Icons.person_rounded,
+                            color: isDarkMode ? Colors.tealAccent : Colors.teal.shade700,
+                            title: 'প্রধান শিক্ষক',
+                            content: headmaster,
+                            isDarkMode: isDarkMode,
+                          ),
+                        ],
+                        if (phone.isNotEmpty) ...[
+                          Divider(height: 32, color: isDarkMode ? Colors.white24 : Colors.black12),
+                          _buildPhoneSection(phone, context, isDarkMode),
+                        ],
+                        if (mapLink.isNotEmpty) ...[
+                          Divider(height: 32, color: isDarkMode ? Colors.white24 : Colors.black12),
+                          _buildMapSection(mapLink, context, isDarkMode),
+                        ]
+                      ],
+                    ),
                   ),
-                  const Divider(height: 32),
-                ],
-                if (phone.isNotEmpty) ...[
-                  _buildPhoneSection(phone, context),
-                  const Divider(height: 32),
-                ],
-                // ম্যাপ সেকশন (সবার জন্য, যদি লিংক থাকে)
-                if (mapLink.isNotEmpty) ...[
-                  _buildMapSection(mapLink, context), // <-- address এর পরিবর্তে mapLink পাস করা হচ্ছে
-                ]
-              ],
+                ),
+              ),
             ),
           ),
         ),
@@ -102,79 +145,118 @@ class ItemDetailScreen extends StatelessWidget {
     required Color color,
     required String title,
     required String content,
+    required bool isDarkMode,
   }) {
-    // ... এই উইজেটটি অপরিবর্তিত ...
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Icon(icon, color: color, size: 28),
-            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.2),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: isDarkMode ? color : Color.lerp(color, Colors.black, 0.45)!, size: 24),
+            ),
+            const SizedBox(width: 12),
             Text(title,
-                style:
-                const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black87)),
           ],
         ),
-        const SizedBox(height: 8),
-        Text(content, style: const TextStyle(fontSize: 16)),
+        const SizedBox(height: 12),
+        Padding(
+          padding: const EdgeInsets.only(left: 4.0),
+          child: Text(content, style: TextStyle(fontSize: 16, height: 1.5, color: isDarkMode ? Colors.white70 : Colors.black87)),
+        ),
       ],
     );
   }
 
-  Widget _buildPhoneSection(String phone, BuildContext context) {
-    // ... এই উইজেটটি অপরিবর্তিত ...
+  Widget _buildPhoneSection(String phone, BuildContext context, bool isDarkMode) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.green.withOpacity(0.2),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(Icons.phone_rounded, color: isDarkMode ? Colors.greenAccent : Colors.green.shade700, size: 24),
+            ),
+            const SizedBox(width: 12),
+            Text('ফোন',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black87)),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Row(
-              children: [
-                Icon(Icons.phone, color: Colors.green, size: 28),
-                SizedBox(width: 8),
-                Text('ফোন',
-                    style:
-                    TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              ],
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 4.0),
+                child: Text(phone,
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: isDarkMode ? Colors.white : Colors.black87)),
+              ),
             ),
             ElevatedButton.icon(
-              icon: const Icon(Icons.call),
+              icon: const Icon(Icons.call_rounded),
               label: const Text('কল করুন'),
               onPressed: () => _makePhoneCall(phone, context),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
+                backgroundColor: isDarkMode ? Colors.greenAccent.shade700 : Colors.green.shade600,
                 foregroundColor: Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               ),
             )
           ],
         ),
-        const SizedBox(height: 8),
-        Text(phone,
-            style:
-            const TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
       ],
     );
   }
 
-  Widget _buildMapSection(String mapUrl, BuildContext context) {
-    // ... এই উইজেটটি অপরিবর্তিত, শুধু address এর পরিবর্তে mapUrl গ্রহণ করছে ...
+  Widget _buildMapSection(String mapUrl, BuildContext context, bool isDarkMode) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildInfoSection(
-          icon: Icons.map_outlined,
-          color: Colors.purple,
-          title: 'লোকেশন',
-          content: 'ঠিকানাটি গুগল ম্যাপে দেখুন',
+        Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.purple.withOpacity(0.2),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(Icons.map_rounded, color: isDarkMode ? Colors.purpleAccent : Colors.purple.shade700, size: 24),
+            ),
+            const SizedBox(width: 12),
+            Text('লোকেশন',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black87)),
+          ],
         ),
+        const SizedBox(height: 12),
         Padding(
-          padding: const EdgeInsets.only(top: 8.0),
-          child: ElevatedButton.icon(
-            icon: const Icon(Icons.open_in_new),
-            label: const Text('ম্যাপ খুলুন'),
-            onPressed: () => _launchGoogleMaps(mapUrl, context),
+          padding: const EdgeInsets.only(left: 4.0),
+          child: Text('ঠিকানাটি গুগল ম্যাপে দেখুন', style: TextStyle(fontSize: 16, color: isDarkMode ? Colors.white70 : Colors.black87)),
+        ),
+        const SizedBox(height: 12),
+        ElevatedButton.icon(
+          icon: const Icon(Icons.open_in_new_rounded),
+          label: const Text('ম্যাপ খুলুন'),
+          onPressed: () => _launchGoogleMaps(mapUrl, context),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: isDarkMode ? Colors.purpleAccent.shade700 : Colors.purple.shade600,
+            foregroundColor: Colors.white,
+            elevation: 0,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           ),
         ),
       ],
