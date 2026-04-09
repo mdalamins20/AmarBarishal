@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import '../widgets/auto_translated_text.dart';
 import 'item_detail_screen.dart';
 
 class CategoryDetailScreen extends StatefulWidget {
@@ -94,7 +95,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
         ),
         backgroundColor: isDarkMode ? Colors.black.withOpacity(0.4) : Colors.white.withOpacity(0.4),
         elevation: 0,
-        title: Text(widget.categoryTitle, style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
+        title: AutoTranslatedText(widget.categoryTitle, style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
         iconTheme: IconThemeData(color: isDarkMode ? Colors.white : Colors.black),
       ),
       body: Container(
@@ -122,8 +123,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                     controller: _searchController,
                     style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
                     decoration: InputDecoration(
-                      labelText: 'এখানে সার্চ করুন...',
-                      labelStyle: TextStyle(color: isDarkMode ? Colors.white70 : Colors.black54),
+                      label: AutoTranslatedText('এখানে সার্চ করুন...', style: TextStyle(color: isDarkMode ? Colors.white70 : Colors.black54)),
                       prefixIcon: Icon(Icons.search, color: isDarkMode ? Colors.white70 : Colors.black54),
                       border: InputBorder.none,
                       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
@@ -139,7 +139,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                       return const Center(child: CircularProgressIndicator());
                     }
                     if (snapshot.hasError) {
-                      return Center(child: Text('একটি সমস্যা হয়েছে', style: TextStyle(color: isDarkMode ? Colors.white : Colors.black)));
+                      return Center(child: AutoTranslatedText('একটি সমস্যা হয়েছে', style: TextStyle(color: isDarkMode ? Colors.white : Colors.black)));
                     }
                     if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                       return Center(
@@ -148,7 +148,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                           children: [
                             Icon(Icons.inbox_outlined, size: 80, color: isDarkMode ? Colors.white30 : Colors.black26),
                             const SizedBox(height: 16),
-                            Text('কোনো তথ্য পাওয়া যায়নি', style: TextStyle(color: isDarkMode ? Colors.white54 : Colors.black54, fontSize: 18)),
+                            AutoTranslatedText('কোনো তথ্য পাওয়া যায়নি', style: TextStyle(color: isDarkMode ? Colors.white54 : Colors.black54, fontSize: 18)),
                           ],
                         ),
                       );
@@ -167,7 +167,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                     }).toList();
 
                     if (filteredItems.isEmpty) {
-                      return Center(child: Text('আপনার সার্চের সাথে মিলে এমন কোনো তথ্য নেই', style: TextStyle(color: isDarkMode ? Colors.white : Colors.black)));
+                      return Center(child: AutoTranslatedText('আপনার সার্চের সাথে মিলে এমন কোনো তথ্য নেই', style: TextStyle(color: isDarkMode ? Colors.white : Colors.black)));
                     }
 
                     return AnimationLimiter(
@@ -211,13 +211,13 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                                       filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                                       child: ListTile(
                                         contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-                                        title: Text(item['name'] ?? 'নাম নেই',
+                                        title: AutoTranslatedText(item['name'] ?? 'নাম নেই',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold, 
                                                 fontSize: 18,
                                                 color: isDarkMode ? Colors.white : Colors.black87)),
                                         subtitle: widget.categoryDocId == 'schoolCollege'
-                                            ? Text("প্রধান শিক্ষক: $headmaster",
+                                            ? AutoTranslatedText("প্রধান শিক্ষক: $headmaster",
                                             maxLines: 1, overflow: TextOverflow.ellipsis,
                                             style: TextStyle(color: isDarkMode ? Colors.white70 : Colors.black54))
                                             : null,

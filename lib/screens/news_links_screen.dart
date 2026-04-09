@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:my_barishal_new/screens/webview_screen.dart';
+import '../widgets/auto_translated_text.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:io' show Platform;
 
@@ -52,7 +53,7 @@ class NewsLinksScreen extends StatelessWidget {
         ),
         backgroundColor: isDarkMode ? Colors.black.withOpacity(0.4) : Colors.white.withOpacity(0.4),
         elevation: 0,
-        title: Text('বরিশালের খবর', style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
+        title: AutoTranslatedText('বরিশালের খবর', style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
         iconTheme: IconThemeData(color: isDarkMode ? Colors.white : Colors.black),
       ),
       body: Container(
@@ -74,7 +75,7 @@ class NewsLinksScreen extends StatelessWidget {
               }
 
               if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                return const Center(child: Text('কোনো পত্রিকা পাওয়া যায়নি!'));
+                return const Center(child: AutoTranslatedText('কোনো পত্রিকা পাওয়া যায়নি!'));
               }
 
               final newsDocs = snapshot.data!.docs;
@@ -159,7 +160,7 @@ class NewsLinksScreen extends StatelessWidget {
                                           const SizedBox(height: 12),
                                           Padding(
                                             padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                                            child: Text(
+                                            child: AutoTranslatedText(
                                               title,
                                               textAlign: TextAlign.center,
                                               style: TextStyle(

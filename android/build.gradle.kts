@@ -4,8 +4,8 @@ plugins {
     id("com.android.library") apply false
     id("org.jetbrains.kotlin.android") apply false
 
-    // Google Services plugin (এর ভার্সন ঠিক আছে)
-    id("com.google.gms.google-services") version "4.4.2" apply false
+    // Google Services plugin
+    id("com.google.gms.google-services") apply false
 }
 
 allprojects {

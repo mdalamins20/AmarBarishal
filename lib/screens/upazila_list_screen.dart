@@ -2,7 +2,9 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:my_barishal_new/screens/category_detail_screen.dart';
+import '../widgets/auto_translated_text.dart';
 
 class UpazilaListScreen extends StatelessWidget {
   final String categoryId;
@@ -30,7 +32,7 @@ class UpazilaListScreen extends StatelessWidget {
         ),
         backgroundColor: isDarkMode ? Colors.black.withOpacity(0.4) : Colors.white.withOpacity(0.4),
         elevation: 0,
-        title: Text(categoryTitle, style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
+        title: AutoTranslatedText(categoryTitle, style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
         iconTheme: IconThemeData(color: isDarkMode ? Colors.white : Colors.black),
       ),
       body: Container(
@@ -56,7 +58,7 @@ class UpazilaListScreen extends StatelessWidget {
               }
 
               if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                return const Center(child: Text('কোনো উপজেলা ডাটাবেসে নেই!'));
+                return const Center(child: AutoTranslatedText('কোনো উপজেলা ডাটাবেসে নেই!'));
               }
 
               List<Map<String, dynamic>> upazilasToShow = snapshot.data!.docs.map((doc) => {
@@ -102,7 +104,7 @@ class UpazilaListScreen extends StatelessWidget {
                                 filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                                 child: ListTile(
                                   contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                                  title: Text(
+                                  title: AutoTranslatedText(
                                     upazilaName, 
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,

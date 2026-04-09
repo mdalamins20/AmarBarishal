@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../widgets/auto_translated_text.dart';
 
 class ItemDetailScreen extends StatelessWidget {
   final Map<String, dynamic> itemData;
@@ -19,7 +20,7 @@ class ItemDetailScreen extends StatelessWidget {
     } else {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('কল করা যাচ্ছে না: $phoneNumber')),
+          SnackBar(content: const Text('কল করা যাচ্ছে না: ').addTextSpan(phoneNumber)),
         );
       }
     }
@@ -32,7 +33,7 @@ class ItemDetailScreen extends StatelessWidget {
     } else {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('ম্যাপ খোলা যাচ্ছে না: $mapUrl')),
+          SnackBar(content: const Text('ম্যাপ খোলা যাচ্ছে না: ').addTextSpan(mapUrl)),
         );
       }
     }
@@ -60,7 +61,7 @@ class ItemDetailScreen extends StatelessWidget {
         ),
         backgroundColor: isDarkMode ? Colors.black.withOpacity(0.4) : Colors.white.withOpacity(0.4),
         elevation: 0,
-        title: Text(name, style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
+        title: AutoTranslatedText(name, style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
         iconTheme: IconThemeData(color: isDarkMode ? Colors.white : Colors.black),
       ),
       body: Container(
@@ -161,14 +162,14 @@ class ItemDetailScreen extends StatelessWidget {
               child: Icon(icon, color: isDarkMode ? color : Color.lerp(color, Colors.black, 0.45)!, size: 24),
             ),
             const SizedBox(width: 12),
-            Text(title,
+            AutoTranslatedText(title,
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black87)),
           ],
         ),
         const SizedBox(height: 12),
         Padding(
           padding: const EdgeInsets.only(left: 4.0),
-          child: Text(content, style: TextStyle(fontSize: 16, height: 1.5, color: isDarkMode ? Colors.white70 : Colors.black87)),
+          child: AutoTranslatedText(content, style: TextStyle(fontSize: 16, height: 1.5, color: isDarkMode ? Colors.white70 : Colors.black87)),
         ),
       ],
     );
@@ -189,7 +190,7 @@ class ItemDetailScreen extends StatelessWidget {
               child: Icon(Icons.phone_rounded, color: isDarkMode ? Colors.greenAccent : Colors.green.shade700, size: 24),
             ),
             const SizedBox(width: 12),
-            Text('ফোন',
+            AutoTranslatedText('ফোন',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black87)),
           ],
         ),
@@ -201,12 +202,13 @@ class ItemDetailScreen extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.only(left: 4.0),
                 child: Text(phone,
+                     // Phone number usually doesn't need translation
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: isDarkMode ? Colors.white : Colors.black87)),
               ),
             ),
             ElevatedButton.icon(
               icon: const Icon(Icons.call_rounded),
-              label: const Text('কল করুন'),
+              label: const AutoTranslatedText('কল করুন'),
               onPressed: () => _makePhoneCall(phone, context),
               style: ElevatedButton.styleFrom(
                 backgroundColor: isDarkMode ? Colors.greenAccent.shade700 : Colors.green.shade600,
@@ -237,19 +239,19 @@ class ItemDetailScreen extends StatelessWidget {
               child: Icon(Icons.map_rounded, color: isDarkMode ? Colors.purpleAccent : Colors.purple.shade700, size: 24),
             ),
             const SizedBox(width: 12),
-            Text('লোকেশন',
+            AutoTranslatedText('লোকেশন',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black87)),
           ],
         ),
         const SizedBox(height: 12),
         Padding(
           padding: const EdgeInsets.only(left: 4.0),
-          child: Text('ঠিকানাটি গুগল ম্যাপে দেখুন', style: TextStyle(fontSize: 16, color: isDarkMode ? Colors.white70 : Colors.black87)),
+          child: AutoTranslatedText('ঠিকানাটি গুগল ম্যাপে দেখুন', style: TextStyle(fontSize: 16, color: isDarkMode ? Colors.white70 : Colors.black87)),
         ),
         const SizedBox(height: 12),
         ElevatedButton.icon(
           icon: const Icon(Icons.open_in_new_rounded),
-          label: const Text('ম্যাপ খুলুন'),
+          label: const AutoTranslatedText('ম্যাপ খুলুন'),
           onPressed: () => _launchGoogleMaps(mapUrl, context),
           style: ElevatedButton.styleFrom(
             backgroundColor: isDarkMode ? Colors.purpleAccent.shade700 : Colors.purple.shade600,
@@ -261,5 +263,11 @@ class ItemDetailScreen extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+extension on Text {
+  Text addTextSpan(String suffix) {
+    return Text((data ?? '') + suffix, style: style);
   }
 }

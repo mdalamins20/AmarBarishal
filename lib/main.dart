@@ -9,6 +9,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
 import 'screens/splash_screen.dart';
 import 'services/notification_service.dart';
+import 'package:provider/provider.dart';
+import 'providers/language_provider.dart';
 
 // Background message handler অবশ্যই টপ-লেভেল ফাংশন হতে হবে
 @pragma('vm:entry-point')
@@ -41,7 +43,14 @@ Future<void> main() async {
   }
 
   // 5. অ্যাপ রান করা
-  runApp(const MyBarishalApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => LanguageProvider()),
+      ],
+      child: const MyBarishalApp(),
+    ),
+  );
 }
 
 // থিমের ডেটা build মেথডের বাইরে রাখা হয়েছে পারফরম্যান্সের জন্য
