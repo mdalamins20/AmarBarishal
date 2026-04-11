@@ -11,7 +11,7 @@ import 'screens/splash_screen.dart';
 import 'services/notification_service.dart';
 import 'package:provider/provider.dart';
 import 'providers/language_provider.dart';
-
+import 'services/database_seeder.dart';
 // Background message handler অবশ্যই টপ-লেভেল ফাংশন হতে হবে
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -41,6 +41,9 @@ Future<void> main() async {
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
     await NotificationService().initNotifications();
   }
+
+  // Ensure default categories exist in Firebase so they don't disappear from Home Screen
+  await DatabaseSeeder.ensureDefaultData();
 
   // 5. অ্যাপ রান করা
   runApp(
