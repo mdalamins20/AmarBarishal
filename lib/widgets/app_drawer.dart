@@ -79,7 +79,7 @@ class AppDrawer extends StatelessWidget {
               Expanded(
                 child: ListView(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                  physics: const BouncingScrollPhysics(),
+                  physics: const ClampingScrollPhysics(),
                   children: <Widget>[
                     _buildDrawerItem(
                       context, icon: Icons.home_rounded, title: lang.t('home'), isDarkMode: isDarkMode,

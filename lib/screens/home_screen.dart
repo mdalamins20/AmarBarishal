@@ -1,310 +1,758 @@
 import 'dart:ui';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:my_barishal_new/screens/category_detail_screen.dart';
 import 'package:my_barishal_new/screens/news_links_screen.dart';
 import 'package:my_barishal_new/screens/notification_screen.dart';
 import 'package:my_barishal_new/screens/upazila_list_screen.dart';
-import 'package:my_barishal_new/widgets/app_drawer.dart';
-import 'package:provider/provider.dart';
-import '../providers/language_provider.dart';
+import 'package:my_barishal_new/screens/news_source_screen.dart';
+import 'package:my_barishal_new/screens/sos_list_screen.dart';
+import 'package:my_barishal_new/screens/specialist_list_screen.dart';
 import '../widgets/auto_translated_text.dart';
+import 'global_search_delegate.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:geolocator/geolocator.dart';
+import 'diagnostic_screen.dart';
+import 'all_services_screen.dart';
+import 'ticket_providers_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback onThemeChanged;
   const HomeScreen({super.key, required this.onThemeChanged});
+
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // Local categories removed, loading straight from Firestore
-  void _onCategoryTap(String categoryId, String categoryName, Map<String, dynamic> categoryData) {
+  String _hospitalCount = '...';
+  String _schoolCount = '...';
+  String _hotelCount = '...';
+  String _emergencyCount = '...';
+
+  List<String> _recentUpdates = [];
+  bool _isLoadingUpdates = true;
+
+  String _temperature = '--';
+  String _weatherDescription = 'লোড হচ্ছে...';
+  String _weatherEmoji = '🌤️';
+  String _locationName = 'বরিশাল';
+
+  int _currentBannerIndex = 0;
+  Timer? _bannerTimer;
+  final List<String> _bannerImages = [
+    'https://res.cloudinary.com/dqmmlwqig/image/upload/v1778841868/kuakata-patuakhai-02_cwo4l8.jpg',
+    'https://upload.wikimedia.org/wikipedia/commons/9/90/%E0%A6%A6%E0%A7%81%E0%A6%B0%E0%A7%8D%E0%A6%97%E0%A6%BE%E0%A6%B8%E0%A6%BE%E0%A6%97%E0%A6%B0_%E0%A6%A6%E0%A6%BF%E0%A6%98%E0%A6%BF....jpg',
+    'https://vromonguide.com/wp-content/uploads/swarupkathi-guava-floating-market-770x420.jpg',
+    'https://objectstorage.ap-dcc-gazipur-1.oraclecloud15.com/n/axvjbnqprylg/b/V2Ministry/o/office-barishal/2024/12/8de562958b6b4c3986333d9891c1fae0.png'
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadStats();
+    _fetchNews();
+    _fetchWeather();
+    _startBannerTimer();
+  }
+
+  void _startBannerTimer() {
+    _bannerTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      if (mounted) {
+        setState(() {
+          _currentBannerIndex = (_currentBannerIndex + 1) % _bannerImages.length;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _bannerTimer?.cancel();
+    super.dispose();
+  }
+
+  String _toBengaliNumber(int number) {
+    const englishToBengali = {
+      '0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪',
+      '5': '৫', '6': '৬', '7': '৭', '8': '৮', '9': '৯'
+    };
+    return number.toString().split('').map((e) => englishToBengali[e] ?? e).join('');
+  }
+
+  Future<void> _loadStats() async {
+    final firestore = FirebaseFirestore.instance;
+    
+    Future<int> getCount(String categoryId) async {
+      try {
+        final snap = await firestore.collection('categories').doc(categoryId).collection('items').count().get();
+        return snap.count ?? 0;
+      } catch (e) {
+        return 0;
+      }
+    }
+
+    // Load hospital
+    final hospitalCount = await getCount('hospital');
+    if (mounted) setState(() => _hospitalCount = '${_toBengaliNumber(hospitalCount)}+');
+
+    // Load school
+    int totalSchool = 0;
+    for (String cat in ['primarySchool', 'highSchool', 'college', 'university', 'madrasa', 'schoolCollege', 'medical_college', 'engineering_college', 'polytechnic', 'higher_secondary', 'english_medium', 'technical_school', 'drama_school', 'art_school', 'training_institute', 'research_institution', 'special_school']) {
+      totalSchool += await getCount(cat);
+    }
+    if (mounted) setState(() => _schoolCount = '${_toBengaliNumber(totalSchool)}+');
+
+    // Load hotel
+    final hotelCount = await getCount('hotel');
+    if (mounted) setState(() => _hotelCount = '${_toBengaliNumber(hotelCount)}+');
+
+    // Load emergency
+    int totalEmergency = 0;
+    for (String cat in ['police', 'fire_service', 'fireService', 'ambulance']) {
+      totalEmergency += await getCount(cat);
+    }
+    if (mounted) setState(() => _emergencyCount = '${_toBengaliNumber(totalEmergency)}+');
+  }
+
+  Future<void> _fetchNews() async {
+    try {
+      final cacheBuster = DateTime.now().millisecondsSinceEpoch;
+      final response = await http.get(Uri.parse('https://news.google.com/rss/search?q=%E0%A6%AC%E0%A6%B0%E0%A6%BF%E0%A6%B6%E0%A6%BE%E0%A6%B2&hl=bn&gl=BD&ceid=BD:bn&_cb=$cacheBuster'));
+      if (response.statusCode == 200) {
+        // Simple regex to extract titles from RSS
+        final matches = RegExp(r'<item>.*?<title>(.*?)</title>', dotAll: true).allMatches(response.body);
+        final news = matches.map((m) {
+          String text = m.group(1) ?? '';
+          text = text.replaceAll('<![CDATA[', '').replaceAll(']]>', '')
+                     .replaceAll('&quot;', '"').replaceAll('&amp;', '&')
+                     .replaceAll('&lt;', '<').replaceAll('&gt;', '>');
+          return text.trim();
+        }).where((text) => text.isNotEmpty).toList();
+        
+        news.shuffle();
+        
+        if (mounted) {
+          setState(() {
+            _recentUpdates = news.take(5).toList();
+            _isLoadingUpdates = false;
+          });
+        }
+      } else {
+        if (mounted) setState(() => _isLoadingUpdates = false);
+      }
+    } catch (e) {
+      if (mounted) setState(() => _isLoadingUpdates = false);
+    }
+  }
+
+  Future<void> _fetchWeather() async {
+    try {
+      double lat = 22.701;
+      double lon = 90.353;
+      String locName = 'বরিশাল';
+
+      // Check if location permission is granted
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (serviceEnabled) {
+        LocationPermission permission = await Geolocator.checkPermission();
+        if (permission == LocationPermission.denied) {
+          permission = await Geolocator.requestPermission();
+        }
+        
+        if (permission == LocationPermission.whileInUse || permission == LocationPermission.always) {
+          Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+          lat = position.latitude;
+          lon = position.longitude;
+          locName = 'আপনার অবস্থান'; // Default once we have GPS
+
+          // Attempt to get location name using reverse geocoding
+          try {
+            final geoResponse = await http.get(
+              Uri.parse('https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=$lat&longitude=$lon&localityLanguage=bn'),
+            );
+            if (geoResponse.statusCode == 200) {
+              final geoData = json.decode(geoResponse.body);
+              String? name = geoData['city'] ?? geoData['locality'] ?? geoData['principalSubdivision'];
+              if (name != null && name.isNotEmpty) {
+                locName = name.replaceAll(' বিভাগ', '').replaceAll(' জেলা', '');
+              }
+            }
+          } catch (e) {
+            // keep 'আপনার অবস্থান'
+          }
+        }
+      }
+
+      final response = await http.get(Uri.parse('https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current=temperature_2m,weather_code,is_day,cloud_cover&timezone=auto'));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final current = data['current'];
+        final temp = current['temperature_2m'].round().toString();
+        final code = current['weather_code'] as int;
+        final isDay = current['is_day'] as int;
+        final cloudCover = current['cloud_cover'] as int;
+        
+        String desc = isDay == 1 ? 'পরিষ্কার আকাশ' : 'পরিষ্কার রাত';
+        String emoji = isDay == 1 ? '☀️' : '🌙';
+        
+        // Smart override for tropical inaccuracies (API says rain but it's sunny)
+        if (isDay == 1 && cloudCover < 50 && code >= 50) {
+          desc = cloudCover < 20 ? 'রৌদ্রোজ্জ্বল' : 'আংশিক মেঘলা';
+          emoji = cloudCover < 20 ? '☀️' : '🌤️';
+        } else {
+          if (code == 1 || code == 2) { desc = 'আংশিক মেঘলা'; emoji = isDay == 1 ? '🌤️' : '☁️'; }
+          else if (code == 3) { desc = 'মেঘলা'; emoji = '☁️'; }
+          else if (code >= 45 && code <= 48) { desc = 'কুয়াশা'; emoji = '🌫️'; }
+          else if (code >= 51 && code <= 55) { desc = 'গুড়ি গুড়ি বৃষ্টি'; emoji = '🌧️'; }
+          else if (code >= 61 && code <= 65) { desc = 'বৃষ্টি'; emoji = '☔'; }
+          else if (code >= 71 && code <= 77) { desc = 'তুষারপাত'; emoji = '❄️'; }
+          else if (code >= 80 && code <= 82) { desc = 'ভারী বৃষ্টি'; emoji = '🌧️'; }
+          else if (code >= 95) { desc = 'বজ্রসহ বৃষ্টি'; emoji = '⛈️'; }
+        }
+        
+        if (mounted) {
+          setState(() {
+            _temperature = '${_toBengaliNumber(int.parse(temp))}°C';
+            _weatherDescription = desc;
+            _weatherEmoji = emoji;
+            _locationName = locName;
+          });
+        }
+      }
+    } catch (e) {
+      // Ignored for now, UI handles empty state
+    }
+  }
+
+  Future<void> _refreshAll() async {
+    // Reset state for loading indicators if needed
+    if (mounted) {
+      setState(() {
+        _isLoadingUpdates = true;
+      });
+    }
+    await Future.wait([
+      _loadStats(),
+      _fetchNews(),
+      _fetchWeather(),
+    ]);
+  }
+
+  void _onCategoryTap(String categoryId, String categoryName) {
     if (categoryName == "উপজেলা পরিচিতি" || categoryId == 'upazila') {
       Navigator.push(context, MaterialPageRoute(builder: (context) => UpazilaListScreen(categoryId: categoryId, categoryTitle: categoryName)));
-    } else if (categoryName == "পত্রিকা" || categoryId == 'news') {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => const NewsLinksScreen()));
+    } else if (categoryId == 'news' || categoryName == 'পত্রিকা') {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const NewsSourceScreen()));
+    } else if (categoryId == 'sos') {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const SosListScreen()));
+    } else if (categoryId == 'doctor') {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => SpecialistListScreen(categoryTitle: categoryName, categoryDocId: categoryId)));
+    } else if (categoryId == 'diagnostic') {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => DiagnosticScreen(categoryId: categoryId, categoryTitle: categoryName)));
     } else {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => CategoryDetailScreen(
-            categoryTitle: categoryName,
-            categoryDocId: categoryId,
-          ),
-        ),
-      );
-    }
-  }
-
-  IconData _getIconFromString(String iconName, String categoryName) {
-    // Priority 1: Direct Mapping from iconName field
-    switch (iconName) {
-      case 'hospital': return Icons.local_hospital_rounded;
-      case 'police': return Icons.security_rounded;
-      case 'ambulance': return Icons.emergency_rounded;
-      case 'fire_service': return Icons.fire_truck_rounded;
-      case 'landscape': return Icons.landscape_rounded;
-      case 'info': return Icons.info_outline_rounded;
-      case 'news': return Icons.newspaper_rounded;
-      case 'library': return Icons.local_library_rounded;
-      case 'hotel': return Icons.hotel_rounded;
-      case 'doctor': return Icons.medical_services_rounded;
-      case 'restaurant': return Icons.restaurant_rounded;
-      case 'education': return Icons.school_rounded;
-    }
-
-    // Priority 2: Smart Detection based on Name (fixes icons when iconName is generic or missing)
-    final name = categoryName.toLowerCase();
-    if (name.contains('হাসপাতাল') || name.contains('ক্লিনিক')) return Icons.local_hospital_rounded;
-    if (name.contains('ডাক্তার')) return Icons.health_and_safety_rounded;
-    if (name.contains('অ্যাম্বুলেন্স')) return Icons.emergency_share_rounded;
-    if (name.contains('পুলিশ') || name.contains('থানা')) return Icons.local_police_rounded;
-    if (name.contains('ফায়ার')) return Icons.fire_truck_rounded;
-    if (name.contains('উপজেলা')) return Icons.location_city_rounded;
-    if (name.contains('রেস্টুরেন্ট') || name.contains('খাবার')) return Icons.restaurant_rounded;
-    if (name.contains('স্কুল') || name.contains('কলেজ') || name.contains('শিক্ষা')) return Icons.school_rounded;
-    if (name.contains('প্যাকার্স') || name.contains('কুরিয়ার')) return Icons.local_shipping_rounded;
-    if (name.contains('দর্শনীয়') || name.contains('পর্যটন')) return Icons.landscape_rounded;
-    if (name.contains('হোটেল')) return Icons.hotel_rounded;
-    if (name.contains('সিনেমা') || name.contains('হল')) return Icons.movie_creation_rounded;
-    if (name.contains('ব্যাংক')) return Icons.account_balance_rounded;
-    
-    return Icons.category_rounded;
-  }
-
-  Color _getColorFromHex(String hexColor) {
-    hexColor = hexColor.toUpperCase().replaceAll("#", "");
-    if (hexColor.length == 6) hexColor = "FF$hexColor";
-    try {
-      return Color(int.parse(hexColor, radix: 16));
-    } catch (e) {
-      return Colors.blueGrey;
+      Navigator.push(context, MaterialPageRoute(builder: (context) => CategoryDetailScreen(categoryTitle: categoryName, categoryDocId: categoryId)));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    
+    final primaryColor = const Color(0xFF0F4C81);
+    final secondaryColor = const Color(0xFF22A699);
+    final accentColor = const Color(0xFFFF6B35);
+    final bgColor = isDarkMode ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC);
+
     return Scaffold(
-      drawer: const AppDrawer(),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: isDarkMode 
-                ? [const Color(0xFF0F1219), const Color(0xFF1A1F2B)]
-                : [const Color(0xFFF0F4F8), const Color(0xFFE2E8F0)],
-          ),
+      backgroundColor: bgColor,
+      body: SafeArea(
+        bottom: false,
+        child: RefreshIndicator(
+          onRefresh: _refreshAll,
+          color: primaryColor,
+          child: CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(parent: ClampingScrollPhysics()),
+            slivers: [
+            // Custom App Bar with Header Banner
+            SliverToBoxAdapter(
+              child: _buildHeaderBanner(context, isDarkMode, primaryColor),
+            ),
+
+            // Search Bar
+            SliverToBoxAdapter(
+              child: _buildSearchBar(isDarkMode, primaryColor),
+            ),
+
+            // Quick Stats
+            SliverToBoxAdapter(
+              child: _buildQuickStats(isDarkMode, primaryColor, secondaryColor, accentColor),
+            ),
+
+            // Emergency Services (জরুরি সেবা)
+            SliverToBoxAdapter(
+              child: _buildEmergencySection(isDarkMode, accentColor),
+            ),
+
+            // Categorized Services (সকল সেবা)
+            SliverToBoxAdapter(
+              child: _buildAllServicesSection(isDarkMode, primaryColor, secondaryColor),
+            ),
+
+            // Latest Updates (সাম্প্রতিক আপডেট)
+            SliverToBoxAdapter(
+              child: _buildRecentUpdates(isDarkMode, primaryColor),
+            ),
+
+            const SliverToBoxAdapter(child: SizedBox(height: 100)), // Bottom padding for FAB
+          ],
         ),
-        child: CustomScrollView(
-          physics: const BouncingScrollPhysics(),
-          slivers: [
-            SliverAppBar(
-              expandedHeight: 180,
-              floating: false,
-              pinned: true,
-              elevation: 0,
-              centerTitle: true,
-              backgroundColor: isDarkMode ? const Color(0xFF0F1219) : const Color(0xFFF0F4F8),
-              flexibleSpace: FlexibleSpaceBar(
-                background: Stack(
-                  fit: StackFit.expand,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeaderBanner(BuildContext context, bool isDarkMode, Color primaryColor) {
+    return Container(
+      margin: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDarkMode ? const Color(0xFF1E293B) : primaryColor,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: primaryColor.withOpacity(0.3),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 1500),
+                transitionBuilder: (Widget child, Animation<double> animation) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
+                child: Transform.scale(
+                  key: ValueKey<int>(_currentBannerIndex),
+                  scale: 1.15, // Zoom to hide watermarks
+                  child: Image.network(
+                    _bannerImages[_currentBannerIndex],
+                    fit: BoxFit.cover,
+                    alignment: Alignment.center,
+                    width: double.infinity,
+                    height: double.infinity,
+                  ),
+                ),
+              ),
+            ),
+            Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [
+                      (isDarkMode ? const Color(0xFF1E293B) : primaryColor).withOpacity(0.95),
+                      (isDarkMode ? const Color(0xFF1E293B) : primaryColor).withOpacity(0.6),
+                      Colors.transparent,
+                    ],
+                    stops: const [0.0, 0.45, 1.0],
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Weather Widget
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.white.withOpacity(0.2)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Background Decorative Gradient
-                    Positioned(
-                      top: -100,
-                      right: -50,
-                      child: Container(
-                        width: 300,
-                        height: 300,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.blue.withOpacity(0.1),
+                    Row(
+                      children: [
+                        Text(_weatherEmoji, style: const TextStyle(fontSize: 14)),
+                        const SizedBox(width: 6),
+                        Text(
+                          _locationName,
+                          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 13),
                         ),
-                      ),
+                      ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 80, left: 24, right: 24),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            Provider.of<LanguageProvider>(context).t('welcome'),
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: isDarkMode ? Colors.white60 : Colors.black54,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            Provider.of<LanguageProvider>(context).t('app_name'),
-                            style: TextStyle(
-                              fontSize: 32,
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: -0.5,
-                              color: isDarkMode ? Colors.white : Colors.black87,
-                            ),
-                          ),
-                        ],
-                      ),
+                    const SizedBox(height: 4),
+                    Text(
+                      _temperature,
+                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
+                    ),
+                    Text(
+                      _weatherDescription,
+                      style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 11),
                     ),
                   ],
                 ),
               ),
-              actions: [
-                IconButton(
-                  icon: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: isDarkMode ? Colors.white10 : Colors.black12,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(Icons.notifications_none_rounded),
-                  ),
-                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const NotificationScreen())),
-                ),
-                IconButton(
-                  icon: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: isDarkMode ? Colors.white10 : Colors.black12,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded),
-                  ),
-                  onPressed: widget.onThemeChanged,
-                ),
-                const SizedBox(width: 8),
-              ],
+              // Theme Toggle
+              IconButton(
+                icon: Icon(isDarkMode ? Icons.light_mode : Icons.dark_mode, color: Colors.white),
+                onPressed: widget.onThemeChanged,
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          AutoTranslatedText(
+            'আমার বরিশাল',
+            style: const TextStyle(
+              fontSize: 32,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
-            
-            // Grid Categories
-            StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance.collection('categories').orderBy('order').snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const SliverToBoxAdapter(
-                    child: Padding(
-                      padding: EdgeInsets.all(50.0),
-                      child: Center(child: CircularProgressIndicator()),
-                    ),
-                  );
-                }
-
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return SliverToBoxAdapter(
-                    child: Center(child: Text(Provider.of<LanguageProvider>(context).t('category_empty'))),
-                  );
-                }
-
-                final itemsToShow = snapshot.data!.docs.map((doc) => {
-                  'id': doc.id,
-                  ...doc.data() as Map<String, dynamic>
-                }).toList();
-
-                return SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  sliver: SliverGrid(
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 4,
-                      crossAxisSpacing: 12,
-                      mainAxisSpacing: 12,
-                      childAspectRatio: 0.72,
-                    ),
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final categoryData = itemsToShow[index];
-                        final categoryId = categoryData['id'] as String;
-                        final categoryName = categoryData['name'] as String? ?? 'নাম নেই';
-                        final iconName = categoryData['icon'] as String? ?? 'category';
-                        final hexColor = categoryData['color'] as String? ?? '#00A8E8';
-
-                        final categoryIcon = _getIconFromString(iconName, categoryName);
-                        final baseColor = _getColorFromHex(hexColor);
-
-                        return AnimationConfiguration.staggeredGrid(
-                          position: index,
-                          duration: const Duration(milliseconds: 500),
-                          columnCount: 4,
-                          child: ScaleAnimation(
-                            scale: 0.9,
-                            child: FadeInAnimation(
-                              child: _buildPremiumCard(
-                                context,
-                                categoryName,
-                                categoryIcon,
-                                baseColor,
-                                () => _onCategoryTap(categoryId, categoryName, categoryData),
-                                isDarkMode,
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                      childCount: itemsToShow.length,
-                    ),
-                  ),
-                );
-              },
+          ),
+          const SizedBox(height: 4),
+          AutoTranslatedText(
+            'বরিশালের সকল তথ্য এক জায়গায়',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.white.withOpacity(0.8),
             ),
-            const SliverToBoxAdapter(child: SizedBox(height: 100)),
+          ),
+        ],
+      ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildPremiumCard(BuildContext context, String title, IconData icon, Color color, VoidCallback onTap, bool isDark) {
-    return Container(
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF222834) : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
+  Widget _buildSearchBar(bool isDarkMode, Color primaryColor) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        decoration: BoxDecoration(
+          color: isDarkMode ? const Color(0xFF1E293B) : Colors.white,
           borderRadius: BorderRadius.circular(16),
-          splashColor: color.withOpacity(0.1),
-          highlightColor: color.withOpacity(0.05),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 12.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: color.withOpacity(0.12),
-                    shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            )
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(16),
+            onTap: () {
+              showSearch(
+                context: context,
+                delegate: GlobalSearchDelegate(isDarkMode: isDarkMode, primaryColor: primaryColor),
+              );
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Row(
+                children: [
+                  Icon(Icons.search_rounded, color: primaryColor),
+                  const SizedBox(width: 12),
+                  Text(
+                    'হাসপাতাল, থানা, ডাক্তার, হোটেল খুঁজুন...',
+                    style: TextStyle(color: isDarkMode ? Colors.white54 : Colors.grey.shade400, fontSize: 14),
                   ),
-                  child: Icon(
-                    icon, 
-                    size: 28, 
-                    color: color,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                AutoTranslatedText(
-                  title,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 10,
-                    color: isDark ? Colors.white.withOpacity(0.9) : Colors.black87,
-                  ),
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildQuickStats(bool isDarkMode, Color primary, Color secondary, Color accent) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _buildStatCard('হাসপাতাল', _hospitalCount, Icons.local_hospital, primary, isDarkMode),
+          _buildStatCard('স্কুল', _schoolCount, Icons.school, secondary, isDarkMode),
+          _buildStatCard('হোটেল', _hotelCount, Icons.hotel, primary, isDarkMode),
+          _buildStatCard('জরুরি', _emergencyCount, Icons.emergency, accent, isDarkMode),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatCard(String title, String count, IconData icon, Color color, bool isDarkMode) {
+    return Container(
+      width: 80,
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      decoration: BoxDecoration(
+        color: isDarkMode ? const Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          )
+        ],
+      ),
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 24),
+          const SizedBox(height: 8),
+          AutoTranslatedText(count, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: color)),
+          AutoTranslatedText(title, style: TextStyle(fontSize: 10, color: isDarkMode ? Colors.white70 : Colors.black54)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmergencySection(bool isDarkMode, Color accentColor) {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _sectionTitle('জরুরি সেবা', isDarkMode),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildServiceButton('অ্যাম্বুলেন্স', Icons.emergency_share, accentColor, () => _onCategoryTap('ambulance', 'অ্যাম্বুলেন্স'), isDarkMode),
+              _buildServiceButton('পুলিশ', Icons.local_police, accentColor, () => _onCategoryTap('police', 'পুলিশ ও থানা'), isDarkMode),
+              _buildServiceButton('ফায়ার সার্ভিস', Icons.fire_truck, accentColor, () => _onCategoryTap('fire_service', 'ফায়ার সার্ভিস'), isDarkMode),
+              _buildServiceButton('জরুরি কল', Icons.sos_rounded, accentColor, () => _onCategoryTap('sos', 'জরুরি কল'), isDarkMode),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAllServicesSection(bool isDarkMode, Color primaryColor, Color secondaryColor) {
+    final topServices = [
+      {'id': 'hospital', 'name': 'হাসপাতাল', 'icon': Icons.local_hospital, 'color': secondaryColor},
+      {'id': 'doctor', 'name': 'ডাক্তার', 'icon': Icons.health_and_safety, 'color': secondaryColor},
+      {'id': 'diagnostic', 'name': 'ডায়াগনস্টিক', 'icon': Icons.biotech, 'color': secondaryColor},
+      {'id': 'busTicket', 'name': 'বাসের টিকেট', 'icon': Icons.directions_bus, 'color': const Color(0xFFFF6B35)},
+      {'id': 'highSchool', 'name': 'হাই স্কুল', 'icon': Icons.school, 'color': primaryColor},
+      {'id': 'college', 'name': 'কলেজ', 'icon': Icons.account_balance, 'color': primaryColor},
+      {'id': 'hotel', 'name': 'হোটেল', 'icon': Icons.hotel, 'color': const Color(0xFF8E24AA)},
+      {'id': 'all', 'name': 'সকল সেবা', 'icon': Icons.grid_view, 'color': const Color(0xFF0F4C81)},
+    ];
+
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _sectionTitle('শীর্ষ সেবা', isDarkMode),
+          const SizedBox(height: 16),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 16,
+              childAspectRatio: 0.85,
+            ),
+            itemCount: topServices.length,
+            itemBuilder: (context, index) {
+              final item = topServices[index];
+              return _buildSmallServiceButton(
+                item['name'] as String, 
+                item['icon'] as IconData, 
+                item['color'] as Color, 
+                () {
+                  if (item['id'] == 'all') {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const AllServicesScreen()));
+                  } else if (item['id'] == 'busTicket') {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const TicketProvidersScreen()));
+                  } else {
+                    _onCategoryTap(item['id'] as String, item['name'] as String);
+                  }
+                }, 
+                isDarkMode,
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSmallServiceButton(String title, IconData icon, Color color, VoidCallback onTap, bool isDarkMode) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: isDarkMode ? const Color(0xFF1E293B) : Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: color.withOpacity(0.3)),
+                boxShadow: [
+                  BoxShadow(
+                    color: color.withOpacity(0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  )
+                ],
+              ),
+              child: Icon(icon, color: color, size: 24),
+            ),
+            const SizedBox(height: 8),
+            Expanded(
+              child: AutoTranslatedText(
+                title, 
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 10, 
+                  fontWeight: FontWeight.w600,
+                  color: isDarkMode ? Colors.white70 : Colors.black87,
+                )
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildServiceButton(String title, IconData icon, Color color, VoidCallback onTap, bool isDarkMode, {bool isLarge = true}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: isLarge ? 75 : null,
+        decoration: BoxDecoration(
+          color: isDarkMode ? const Color(0xFF1E293B) : Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: color.withOpacity(0.08),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            )
+          ],
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.15),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: color, size: 26),
+            ),
+            const SizedBox(height: 8),
+            AutoTranslatedText(
+              title,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: isDarkMode ? Colors.white70 : Colors.black87,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRecentUpdates(bool isDarkMode, Color primaryColor) {
+    if (_isLoadingUpdates) {
+      return Padding(
+        padding: const EdgeInsets.all(16),
+        child: Center(child: CircularProgressIndicator(color: primaryColor)),
+      );
+    }
+
+    if (_recentUpdates.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _sectionTitle('সাম্প্রতিক আপডেট', isDarkMode),
+          const SizedBox(height: 12),
+          Container(
+            decoration: BoxDecoration(
+              color: isDarkMode ? const Color(0xFF1E293B) : Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4))
+              ]
+            ),
+            child: ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: _recentUpdates.length,
+              separatorBuilder: (context, index) => const Divider(height: 1),
+              itemBuilder: (context, index) {
+                return ListTile(
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(color: primaryColor.withOpacity(0.1), shape: BoxShape.circle),
+                    child: Icon(Icons.newspaper, color: primaryColor, size: 20),
+                  ),
+                  title: AutoTranslatedText(
+                    _recentUpdates[index],
+                    style: TextStyle(fontSize: 13, color: isDarkMode ? Colors.white : Colors.black87),
+                  ),
+                );
+              },
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _sectionTitle(String title, bool isDarkMode) {
+    return AutoTranslatedText(
+      title,
+      style: TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+        color: isDarkMode ? Colors.white : Colors.black,
       ),
     );
   }

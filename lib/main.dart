@@ -12,6 +12,9 @@ import 'services/notification_service.dart';
 import 'package:provider/provider.dart';
 import 'providers/language_provider.dart';
 import 'services/database_seeder.dart';
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 // Background message handler অবশ্যই টপ-লেভেল ফাংশন হতে হবে
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -32,8 +35,13 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // 3. Firestore-এর জন্য অফলাইন ডেটা চালু করা
-  FirebaseFirestore.instance.settings = const Settings(persistenceEnabled: true);
+  // 3. Firestore-এর জন্য অফলাইন ডেটা চালু করা (আনলিমিটেড ক্যাশ) - Only on supported platforms
+  if (!kIsWeb && (defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.iOS)) {
+    FirebaseFirestore.instance.settings = const Settings(
+      persistenceEnabled: true,
+      cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
+    );
+  }
 
   // 4. শুধুমাত্র মোবাইল প্ল্যাটফর্মে নোটিফিকেশন সার্ভিস সেটআপ করা
   //    kIsWeb ব্যবহার করা defaultTargetPlatform চেক করার চেয়ে সহজ
@@ -43,7 +51,7 @@ Future<void> main() async {
   }
 
   // Ensure default categories exist in Firebase so they don't disappear from Home Screen
-  await DatabaseSeeder.ensureDefaultData();
+  // await DatabaseSeeder.ensureDefaultData(); // Removed because it causes permission denied errors
 
   // 5. অ্যাপ রান করা
   runApp(
@@ -163,6 +171,7 @@ class _MyBarishalAppState extends State<MyBarishalApp> {
 
     return MaterialApp(
       title: 'আমার বরিশাল',
+      navigatorKey: navigatorKey,
       theme: _lightTheme,
       darkTheme: _darkTheme,
       themeMode: _themeMode,

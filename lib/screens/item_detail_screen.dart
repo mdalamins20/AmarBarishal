@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 import '../widgets/auto_translated_text.dart';
 
 class ItemDetailScreen extends StatelessWidget {
@@ -14,10 +15,23 @@ class ItemDetailScreen extends StatelessWidget {
   });
 
   Future<void> _makePhoneCall(String phoneNumber, BuildContext context) async {
-    final Uri launchUri = Uri(scheme: 'tel', path: phoneNumber);
-    if (await canLaunchUrl(launchUri)) {
+    const bengaliToEnglish = {
+      '০': '0', '১': '1', '২': '2', '৩': '3', '৪': '4',
+      '৫': '5', '৬': '6', '৭': '7', '৮': '8', '৯': '9',
+    };
+    
+    String englishNumber = phoneNumber;
+    bengaliToEnglish.forEach((bn, en) {
+      englishNumber = englishNumber.replaceAll(bn, en);
+    });
+
+    final cleanNumber = englishNumber.replaceAll(RegExp(r'[^0-9+]'), '');
+    if (cleanNumber.isEmpty) return;
+    
+    final Uri launchUri = Uri(scheme: 'tel', path: cleanNumber);
+    try {
       await launchUrl(launchUri);
-    } else {
+    } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: const Text('কল করা যাচ্ছে না: ').addTextSpan(phoneNumber)),
@@ -44,11 +58,18 @@ class ItemDetailScreen extends StatelessWidget {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final name = itemData['name'] ?? 'নাম পাওয়া যায়নি';
     final address = itemData['address'] ?? 'ঠিকানা পাওয়া যায়নি';
-    final phone = itemData['phone'] ?? '';
     final headmaster = itemData['headmaster'] ?? 'পাওয়া যায়নি';
-    final mapLink = itemData['mapLink'] ?? '';
+    final phone = itemData['mobile']?.toString() ?? itemData['phone']?.toString() ?? '';
+    
+    String mapLink = itemData['mapLink'] ?? '';
+    if (mapLink.isEmpty && name != 'নাম পাওয়া যায়নি') {
+      final encodedQuery = Uri.encodeComponent('$name, Barishal');
+      mapLink = 'https://maps.google.com/maps?q=$encodedQuery&t=&z=15&ie=UTF8&iwloc=&output=embed';
+    }
 
     final bool isSchoolCollege = categoryId == 'schoolCollege';
+    final bool isHospital = categoryId == 'hospital';
+    final bool isAmbulance = categoryId == 'ambulance';
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -121,9 +142,68 @@ class ItemDetailScreen extends StatelessWidget {
                             isDarkMode: isDarkMode,
                           ),
                         ],
+                        if (isHospital) ...[
+                          Divider(height: 32, color: isDarkMode ? Colors.white24 : Colors.black12),
+                          _buildInfoSection(
+                            icon: Icons.person_rounded,
+                            color: isDarkMode ? Colors.tealAccent : Colors.teal.shade700,
+                            title: 'তথ্য প্রদানকারী',
+                            content: "${itemData['provider_name'] ?? 'নাই'} (${itemData['provider_designation'] ?? 'পদবী নেই'})",
+                            isDarkMode: isDarkMode,
+                          ),
+                        ],
+                        if (isAmbulance && itemData['driver_name'] != null && itemData['driver_name'].toString().isNotEmpty) ...[
+                          Divider(height: 32, color: isDarkMode ? Colors.white24 : Colors.black12),
+                          _buildInfoSection(
+                            icon: Icons.airline_seat_recline_normal_rounded,
+                            color: isDarkMode ? Colors.redAccent : Colors.red.shade700,
+                            title: 'ড্রাইভারের নাম',
+                            content: itemData['driver_name'].toString(),
+                            isDarkMode: isDarkMode,
+                          ),
+                        ],
+                        if (itemData['thanas'] != null && (itemData['thanas'] as List).isNotEmpty) ...[
+                          Divider(height: 32, color: isDarkMode ? Colors.white24 : Colors.black12),
+                          _buildListSection(
+                            icon: Icons.local_police_rounded,
+                            color: isDarkMode ? Colors.orangeAccent : Colors.orange.shade700,
+                            title: 'থানাসমূহ',
+                            items: itemData['thanas'],
+                            isDarkMode: isDarkMode,
+                          ),
+                        ],
+                        if (itemData['paurashavas'] != null && (itemData['paurashavas'] as List).isNotEmpty) ...[
+                          Divider(height: 32, color: isDarkMode ? Colors.white24 : Colors.black12),
+                          _buildListSection(
+                            icon: Icons.location_city_rounded,
+                            color: isDarkMode ? Colors.deepPurpleAccent : Colors.deepPurple.shade700,
+                            title: 'পৌরসভাসমূহ',
+                            items: itemData['paurashavas'],
+                            isDarkMode: isDarkMode,
+                          ),
+                        ],
+
+                        if (itemData['unions'] != null && (itemData['unions'] as List).isNotEmpty) ...[
+                          Divider(height: 32, color: isDarkMode ? Colors.white24 : Colors.black12),
+                          _buildListSection(
+                            icon: Icons.holiday_village_rounded,
+                            color: isDarkMode ? Colors.greenAccent : Colors.green.shade700,
+                            title: 'ইউনিয়নসমূহ',
+                            items: itemData['unions'],
+                            isDarkMode: isDarkMode,
+                          ),
+                        ],
                         if (phone.isNotEmpty) ...[
                           Divider(height: 32, color: isDarkMode ? Colors.white24 : Colors.black12),
-                          _buildPhoneSection(phone, context, isDarkMode),
+                          _buildPhoneSection(phone, 'ফোন', context, isDarkMode),
+                        ],
+                        if (itemData['mobile2'] != null && itemData['mobile2'].toString().isNotEmpty) ...[
+                          Divider(height: 32, color: isDarkMode ? Colors.white24 : Colors.black12),
+                          _buildPhoneSection(itemData['mobile2'].toString(), 'বিকল্প নাম্বার', context, isDarkMode),
+                        ],
+                        if (itemData['mobile3'] != null && itemData['mobile3'].toString().isNotEmpty) ...[
+                          Divider(height: 32, color: isDarkMode ? Colors.white24 : Colors.black12),
+                          _buildPhoneSection(itemData['mobile3'].toString(), 'বিকল্প নাম্বার ২', context, isDarkMode),
                         ],
                         if (mapLink.isNotEmpty) ...[
                           Divider(height: 32, color: isDarkMode ? Colors.white24 : Colors.black12),
@@ -175,7 +255,51 @@ class ItemDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPhoneSection(String phone, BuildContext context, bool isDarkMode) {
+  Widget _buildListSection({
+    required IconData icon,
+    required Color color,
+    required String title,
+    required List<dynamic> items,
+    required bool isDarkMode,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.2),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: isDarkMode ? color : Color.lerp(color, Colors.black, 0.45)!, size: 24),
+            ),
+            const SizedBox(width: 12),
+            AutoTranslatedText(title,
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black87)),
+          ],
+        ),
+        const SizedBox(height: 12),
+        ...items.map((item) => Padding(
+          padding: const EdgeInsets.only(left: 12.0, bottom: 8.0, top: 4.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(Icons.arrow_right, size: 20, color: isDarkMode ? Colors.white54 : Colors.black54),
+              const SizedBox(width: 8),
+              Expanded(
+                child: AutoTranslatedText(item.toString(),
+                    style: TextStyle(fontSize: 16, height: 1.3, color: isDarkMode ? Colors.white70 : Colors.black87)),
+              ),
+            ],
+          ),
+        )).toList(),
+      ],
+    );
+  }
+
+  Widget _buildPhoneSection(String phone, String title, BuildContext context, bool isDarkMode) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -190,7 +314,7 @@ class ItemDetailScreen extends StatelessWidget {
               child: Icon(Icons.phone_rounded, color: isDarkMode ? Colors.greenAccent : Colors.green.shade700, size: 24),
             ),
             const SizedBox(width: 12),
-            AutoTranslatedText('ফোন',
+            AutoTranslatedText(title,
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black87)),
           ],
         ),
@@ -244,23 +368,76 @@ class ItemDetailScreen extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 12),
-        Padding(
-          padding: const EdgeInsets.only(left: 4.0),
-          child: AutoTranslatedText('ঠিকানাটি গুগল ম্যাপে দেখুন', style: TextStyle(fontSize: 16, color: isDarkMode ? Colors.white70 : Colors.black87)),
-        ),
-        const SizedBox(height: 12),
-        ElevatedButton.icon(
-          icon: const Icon(Icons.open_in_new_rounded),
-          label: const AutoTranslatedText('ম্যাপ খুলুন'),
-          onPressed: () => _launchGoogleMaps(mapUrl, context),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: isDarkMode ? Colors.purpleAccent.shade700 : Colors.purple.shade600,
-            foregroundColor: Colors.white,
-            elevation: 0,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        SizedBox(
+          height: 250,
+          width: double.infinity,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: InlineMapWidget(mapUrl: mapUrl),
           ),
         ),
+      ],
+    );
+  }
+}
+
+class InlineMapWidget extends StatefulWidget {
+  final String mapUrl;
+  const InlineMapWidget({super.key, required this.mapUrl});
+
+  @override
+  State<InlineMapWidget> createState() => _InlineMapWidgetState();
+}
+
+class _InlineMapWidgetState extends State<InlineMapWidget> {
+  late final WebViewController _controller;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onPageFinished: (String url) {
+            if (mounted) {
+              setState(() {
+                _isLoading = false;
+              });
+            }
+          },
+        ),
+      );
+      
+    final htmlContent = '''
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <style>
+          body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; background: transparent; }
+          iframe { width: 100%; height: 100%; border: 0; }
+        </style>
+      </head>
+      <body>
+        <iframe src="${widget.mapUrl}" allowfullscreen></iframe>
+      </body>
+      </html>
+    ''';
+    
+    _controller.loadHtmlString(htmlContent);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        WebViewWidget(controller: _controller),
+        if (_isLoading)
+          const Center(
+            child: CircularProgressIndicator(),
+          ),
       ],
     );
   }

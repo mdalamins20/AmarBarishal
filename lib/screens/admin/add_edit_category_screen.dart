@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:my_barishal_new/services/fcm_sender_service.dart';
 
 class AddEditCategoryScreen extends StatefulWidget {
   final String? documentId;
@@ -45,8 +46,16 @@ class _AddEditCategoryScreenState extends State<AddEditCategoryScreen> with Sing
     try {
       if (widget.documentId == null) {
         await FirebaseFirestore.instance.collection('categories').add(data);
+        FcmSenderService.sendNotificationToAllUsers(
+          title: 'নতুন ফিচার যুক্ত হয়েছে!',
+          body: 'অ্যাপে "$_name" নামে একটি নতুন ক্যাটাগরি যুক্ত করা হয়েছে।',
+        );
       } else {
         await FirebaseFirestore.instance.collection('categories').doc(widget.documentId).update(data);
+        FcmSenderService.sendNotificationToAllUsers(
+          title: 'ক্যাটাগরি আপডেট হয়েছে',
+          body: '"$_name" ক্যাটাগরিটি আপডেট করা হয়েছে।',
+        );
       }
       if(mounted) {
          ScaffoldMessenger.of(context).showSnackBar(
@@ -95,7 +104,7 @@ class _AddEditCategoryScreenState extends State<AddEditCategoryScreen> with Sing
     return Scaffold(
       backgroundColor: isDark ? const Color(0xFF0F1219) : const Color(0xFFF4F6FA),
       body: CustomScrollView(
-        physics: const BouncingScrollPhysics(),
+        physics: const ClampingScrollPhysics(),
         slivers: [
           SliverAppBar(
             expandedHeight: 180,
@@ -298,6 +307,8 @@ class _AddEditCategoryScreenState extends State<AddEditCategoryScreen> with Sing
       keyboardType: keyboardType,
       validator: validator,
       onSaved: onSaved,
+      autocorrect: false,
+      enableSuggestions: false,
       style: TextStyle(color: isDark ? Colors.white : Colors.black87, fontWeight: FontWeight.w500, fontSize: 15),
       decoration: InputDecoration(
         labelText: label,

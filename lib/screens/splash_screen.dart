@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'home_screen.dart'; // HomeScreen import করা হচ্ছে
+import 'main_screen.dart';
+import '../services/notification_service.dart';
 
 class SplashScreen extends StatefulWidget {
   final VoidCallback onThemeChanged;
@@ -17,6 +18,9 @@ class _SplashScreenState extends State<SplashScreen> {
 
     // প্রথম ফ্রেম build হওয়ার পর Navigator চালানো হবে
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Request permission and subscribe here
+      NotificationService().requestPermissionAndSubscribe();
+      
       Timer(
         const Duration(seconds: 3),
             () {
@@ -25,7 +29,7 @@ class _SplashScreenState extends State<SplashScreen> {
             context,
             MaterialPageRoute(
               builder: (context) =>
-                  HomeScreen(onThemeChanged: widget.onThemeChanged),
+                  MainScreen(onThemeChanged: widget.onThemeChanged),
             ),
           );
         },

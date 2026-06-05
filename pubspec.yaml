@@ -26,6 +26,10 @@ dependencies:
   webview_flutter: ^4.13.0
   share_plus: ^12.0.2
   translator: ^1.0.4+1
+  http: ^1.6.0
+  geolocator: ^13.0.1
+  permission_handler: ^11.3.1
+  googleapis_auth: ^1.4.1
 
 dev_dependencies:
   flutter_test:
@@ -54,3 +58,4 @@ flutter:
     - assets/fonts/                # ✅ যদি পুরো ফোল্ডার ব্যবহার করতে চাও
     - assets/icon/splash_logo.png  # ✅ স্প্ল্যাশ লোগো
     - assets/icon/icon.png         # ✅ লঞ্চার আইকনও add করে রাখা ভালো
+    - assets/images/header_bg.png

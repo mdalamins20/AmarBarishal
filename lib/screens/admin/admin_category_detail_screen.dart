@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:my_barishal_new/screens/add_edit_item_screen.dart';
+import 'package:my_barishal_new/services/fcm_sender_service.dart';
 
 class AdminCategoryDetailScreen extends StatefulWidget {
   final String categoryTitle;
@@ -49,13 +50,24 @@ class _AdminCategoryDetailScreenState extends State<AdminCategoryDetailScreen> {
         actions: [
           TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text('না')),
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               var ref = FirebaseFirestore.instance.collection('categories').doc(widget.categoryDocId);
               if (widget.upazilaDocId != null) {
                 ref = ref.collection('upazilas').doc(widget.upazilaDocId);
               }
-              ref.collection('items').doc(docId).delete();
-              Navigator.of(ctx).pop();
+              
+              // Get item name before deleting for notification
+              final docSnap = await ref.collection('items').doc(docId).get();
+              final itemName = docSnap.data()?['name'] ?? 'একটি তথ্য';
+              
+              await ref.collection('items').doc(docId).delete();
+              
+              FcmSenderService.sendNotificationToAllUsers(
+                title: 'তথ্য মুছে ফেলা হয়েছে',
+                body: '$itemName ডিরেক্টরি থেকে মুছে ফেলা হয়েছে।',
+              );
+              
+              if (context.mounted) Navigator.of(ctx).pop();
             },
             child: const Text('হ্যাঁ', style: TextStyle(color: Colors.red)),
           ),

@@ -92,7 +92,7 @@ class AboutMeScreen extends StatelessWidget {
           final about = data['about'] ?? 'কোনো বিবরণ নেই';
 
           return SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
+            physics: const ClampingScrollPhysics(),
             child: Column(
               children: [
                 // ─── Beautiful Header Stack ────

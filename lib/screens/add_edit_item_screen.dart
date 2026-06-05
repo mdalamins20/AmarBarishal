@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../services/fcm_sender_service.dart';
 
 class AddEditItemScreen extends StatefulWidget {
   final String categoryDocId;
@@ -86,8 +87,16 @@ class _AddEditItemScreenState extends State<AddEditItemScreen>
 
         if (_isEditing) {
           await itemsCollection.doc(widget.itemDocId).update(data);
+          FcmSenderService.sendNotificationToAllUsers(
+            title: 'তথ্য আপডেট হয়েছে!',
+            body: '${data['name']} এর তথ্য সম্প্রতি আপডেট করা হয়েছে।',
+          );
         } else {
           await itemsCollection.add(data);
+          FcmSenderService.sendNotificationToAllUsers(
+            title: 'নতুন তথ্য যোগ হয়েছে!',
+            body: '${data['name']} আমাদের ডিরেক্টরিতে যোগ হয়েছে।',
+          );
         }
 
         if (mounted) {
@@ -151,7 +160,7 @@ class _AddEditItemScreenState extends State<AddEditItemScreen>
     return Scaffold(
       backgroundColor: isDark ? const Color(0xFF0F1219) : const Color(0xFFF4F6FA),
       body: CustomScrollView(
-        physics: const BouncingScrollPhysics(),
+        physics: const ClampingScrollPhysics(),
         slivers: [
           // ─── Premium SliverAppBar ───────────────────────────────────────
           SliverAppBar(
@@ -444,6 +453,8 @@ class _AddEditItemScreenState extends State<AddEditItemScreen>
       keyboardType: keyboardType,
       maxLines: maxLines,
       validator: validator,
+      autocorrect: false,
+      enableSuggestions: false,
       style: TextStyle(
         color: isDark ? Colors.white : Colors.black87,
         fontWeight: FontWeight.w500,

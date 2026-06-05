@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:my_barishal_new/screens/admin/admin_category_detail_screen.dart';
 import 'package:my_barishal_new/screens/admin/admin_upazila_list_screen.dart';
+import 'package:my_barishal_new/screens/admin/manage_news_links_screen.dart';
+import 'package:my_barishal_new/screens/admin/admin_doctor_list_screen.dart';
+import 'package:my_barishal_new/screens/admin/admin_diagnostic_list_screen.dart';
+import 'package:my_barishal_new/screens/admin/admin_sos_list_screen.dart';
 import 'package:my_barishal_new/utils/helpers.dart';
 
 class AdminManageDataCategoriesScreen extends StatelessWidget {
@@ -86,17 +90,39 @@ class AdminManageDataCategoriesScreen extends StatelessWidget {
                               subtitle: Text('ডাটা ম্যানেজ করতে ক্লিক করুন', style: TextStyle(color: isDarkMode ? Colors.white54 : Colors.black54)),
                               trailing: Icon(Icons.arrow_forward_ios, color: isDarkMode ? Colors.white30 : Colors.black26, size: 18),
                               onTap: () {
-                                if (categoryDocId == 'upazilas') {
+                                if (categoryDocId == 'upazilas' || categoryDocId == 'upazila') {
                                   Navigator.of(context).push(MaterialPageRoute(
                                     builder: (_) => AdminUpazilaListScreen(
                                       categoryId: categoryDocId,
                                       categoryTitle: category['name'],
                                     )
                                   ));
+                                } else if (categoryDocId == 'news' || category['name'] == 'পত্রিকা' || category['name'].toString().contains('খবর')) {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (_) => const ManageNewsLinksScreen()
+                                  ));
+                                } else if (categoryDocId == 'sos') {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (_) => const AdminSosListScreen()
+                                  ));
+                                } else if (categoryDocId == 'doctor') {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (_) => AdminSpecialistListScreen(
+                                      categoryTitle: category['name'] ?? 'ডাক্তার', 
+                                      categoryDocId: categoryDocId
+                                    )
+                                  ));
+                                } else if (categoryDocId == 'diagnostic') {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (_) => AdminDiagnosticListScreen(
+                                      categoryId: categoryDocId, 
+                                      categoryTitle: category['name'] ?? 'ডায়াগনস্টিক'
+                                    )
+                                  ));
                                 } else {
                                   Navigator.of(context).push(MaterialPageRoute(
                                     builder: (_) => AdminCategoryDetailScreen(
-                                      categoryTitle: category['name'],
+                                      categoryTitle: category['name'] ?? 'নাম নেই',
                                       categoryDocId: categoryDocId,
                                     )
                                   ));

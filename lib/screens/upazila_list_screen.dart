@@ -5,8 +5,8 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:my_barishal_new/screens/category_detail_screen.dart';
 import '../widgets/auto_translated_text.dart';
-
-class UpazilaListScreen extends StatelessWidget {
+import 'wiki_upazila_detail_screen.dart';
+class UpazilaListScreen extends StatefulWidget {
   final String categoryId;
   final String categoryTitle;
 
@@ -15,6 +15,23 @@ class UpazilaListScreen extends StatelessWidget {
     required this.categoryId,
     required this.categoryTitle,
   });
+
+  @override
+  State<UpazilaListScreen> createState() => _UpazilaListScreenState();
+}
+
+class _UpazilaListScreenState extends State<UpazilaListScreen> {
+  late Stream<QuerySnapshot> _upazilaStream;
+
+  @override
+  void initState() {
+    super.initState();
+    _upazilaStream = FirebaseFirestore.instance
+        .collection('categories')
+        .doc(widget.categoryId)
+        .collection('upazilas')
+        .snapshots();
+  }
 
   // Local upazilas removed, loaded fully from DB.
   @override
@@ -32,7 +49,7 @@ class UpazilaListScreen extends StatelessWidget {
         ),
         backgroundColor: isDarkMode ? Colors.black.withOpacity(0.4) : Colors.white.withOpacity(0.4),
         elevation: 0,
-        title: AutoTranslatedText(categoryTitle, style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
+        title: AutoTranslatedText(widget.categoryTitle, style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
         iconTheme: IconThemeData(color: isDarkMode ? Colors.white : Colors.black),
       ),
       body: Container(
@@ -47,11 +64,7 @@ class UpazilaListScreen extends StatelessWidget {
         ),
         child: SafeArea(
           child: StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection('categories')
-                .doc(categoryId)
-                .collection('upazilas')
-                .snapshots(),
+            stream: _upazilaStream,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
@@ -61,9 +74,10 @@ class UpazilaListScreen extends StatelessWidget {
                 return const Center(child: AutoTranslatedText('কোনো উপজেলা ডাটাবেসে নেই!'));
               }
 
-              List<Map<String, dynamic>> upazilasToShow = snapshot.data!.docs.map((doc) => {
-                'id': doc.id,
-                'name': (doc.data() as Map<String, dynamic>)['name'] ?? 'নাম নেই'
+              List<Map<String, dynamic>> upazilasToShow = snapshot.data!.docs.map((doc) {
+                final data = doc.data() as Map<String, dynamic>;
+                data['id'] = doc.id;
+                return data;
               }).toList();
               return AnimationLimiter(
                 child: ListView.builder(
@@ -124,9 +138,8 @@ class UpazilaListScreen extends StatelessWidget {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => CategoryDetailScreen(
-                                          categoryTitle: upazilaName,
-                                          categoryDocId: categoryId,
+                                        builder: (context) => WikiUpazilaDetailScreen(
+                                          upazilaData: upazila,
                                           upazilaDocId: upazilaId,
                                         ),
                                       ),
