@@ -21,7 +21,7 @@ def normalize_text(text):
 
 def parse_upazilas():
     url = "https://barisal.gov.bd/pages/static-pages/697887ac35ce18e1c06624aa"
-    response = requests.get(url, verify=False)
+    response = requests.get(url, verify=True)
     soup = BeautifulSoup(response.content, 'html.parser')
 
     tables = soup.find_all('table')

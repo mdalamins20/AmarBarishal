@@ -43,7 +43,7 @@ class SosListScreen extends StatelessWidget {
             child: Container(color: Colors.transparent),
           ),
         ),
-        backgroundColor: isDarkMode ? Colors.black.withOpacity(0.4) : Colors.white.withOpacity(0.4),
+        backgroundColor: isDarkMode ? Colors.black.withValues(alpha: 0.4) : Colors.white.withValues(alpha: 0.4),
         elevation: 0,
         title: AutoTranslatedText('জরুরি হটলাইন (SOS)', style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
         iconTheme: IconThemeData(color: isDarkMode ? Colors.white : Colors.black),
@@ -97,11 +97,11 @@ class SosListScreen extends StatelessWidget {
                             margin: const EdgeInsets.only(bottom: 16.0),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
-                              color: isDarkMode ? Colors.white.withOpacity(0.05) : Colors.white,
-                              border: Border.all(color: isDarkMode ? Colors.redAccent.withOpacity(0.3) : Colors.red.withOpacity(0.2), width: 1.5),
+                              color: isDarkMode ? Colors.white.withValues(alpha: 0.05) : Colors.white,
+                              border: Border.all(color: isDarkMode ? Colors.redAccent.withValues(alpha: 0.3) : Colors.red.withValues(alpha: 0.2), width: 1.5),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.redAccent.withOpacity(isDarkMode ? 0.05 : 0.1),
+                                  color: Colors.redAccent.withValues(alpha: isDarkMode ? 0.05 : 0.1),
                                   blurRadius: 15,
                                   offset: const Offset(0, 5),
                                 )
@@ -126,7 +126,7 @@ class SosListScreen extends StatelessWidget {
                                             borderRadius: BorderRadius.circular(12),
                                             boxShadow: [
                                               BoxShadow(
-                                                color: Colors.black.withOpacity(0.05),
+                                                color: Colors.black.withValues(alpha: 0.05),
                                                 blurRadius: 4,
                                               )
                                             ]

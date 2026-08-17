@@ -26,12 +26,10 @@ class _TicketProvidersScreenState extends State<TicketProvidersScreen> {
   Future<void> _fetchEnglishLocation() async {
     try {
       Position? position = await Geolocator.getLastKnownPosition();
-      if (position == null) {
-        position = await Geolocator.getCurrentPosition(
+      position ??= await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.low,
           timeLimit: const Duration(seconds: 3),
         );
-      }
       final lat = position.latitude;
       final lon = position.longitude;
 
@@ -100,7 +98,7 @@ class _TicketProvidersScreenState extends State<TicketProvidersScreen> {
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
+                          color: Colors.black.withValues(alpha: 0.05),
                           blurRadius: 10,
                           offset: const Offset(0, 4),
                         )
@@ -115,7 +113,7 @@ class _TicketProvidersScreenState extends State<TicketProvidersScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const AutoTranslatedText('আপনার বর্তমান লোকেশন:', style: TextStyle(fontSize: 12, color: Colors.grey)),
-                              Text('$_englishCity', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                              Text(_englishCity, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                             ],
                           ),
                         ),
@@ -154,7 +152,7 @@ class _TicketProvidersScreenState extends State<TicketProvidersScreen> {
                                 borderRadius: BorderRadius.circular(16),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: (p['color'] as Color).withOpacity(0.3),
+                                    color: (p['color'] as Color).withValues(alpha: 0.3),
                                     blurRadius: 8,
                                     offset: const Offset(0, 4),
                                   )

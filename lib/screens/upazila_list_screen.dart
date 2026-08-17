@@ -2,8 +2,6 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:my_barishal_new/screens/category_detail_screen.dart';
 import '../widgets/auto_translated_text.dart';
 import 'wiki_upazila_detail_screen.dart';
 class UpazilaListScreen extends StatefulWidget {
@@ -47,7 +45,7 @@ class _UpazilaListScreenState extends State<UpazilaListScreen> {
             child: Container(color: Colors.transparent),
           ),
         ),
-        backgroundColor: isDarkMode ? Colors.black.withOpacity(0.4) : Colors.white.withOpacity(0.4),
+        backgroundColor: isDarkMode ? Colors.black.withValues(alpha: 0.4) : Colors.white.withValues(alpha: 0.4),
         elevation: 0,
         title: AutoTranslatedText(widget.categoryTitle, style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
         iconTheme: IconThemeData(color: isDarkMode ? Colors.white : Colors.black),
@@ -100,13 +98,13 @@ class _UpazilaListScreenState extends State<UpazilaListScreen> {
                               borderRadius: BorderRadius.circular(16),
                               gradient: LinearGradient(
                                 colors: isDarkMode 
-                                  ? [Colors.white.withOpacity(0.05), Colors.white.withOpacity(0.02)]
-                                  : [Colors.white.withOpacity(0.8), Colors.white.withOpacity(0.4)],
+                                  ? [Colors.white.withValues(alpha: 0.05), Colors.white.withValues(alpha: 0.02)]
+                                  : [Colors.white.withValues(alpha: 0.8), Colors.white.withValues(alpha: 0.4)],
                               ),
                               border: Border.all(color: isDarkMode ? Colors.white12 : Colors.white, width: 1.5),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.05),
+                                  color: Colors.black.withValues(alpha: 0.05),
                                   blurRadius: 10,
                                   spreadRadius: 1,
                                 )
@@ -129,7 +127,7 @@ class _UpazilaListScreenState extends State<UpazilaListScreen> {
                                   trailing: Container(
                                     padding: const EdgeInsets.all(8),
                                     decoration: BoxDecoration(
-                                      color: isDarkMode ? Colors.white10 : Colors.black.withOpacity(0.05),
+                                      color: isDarkMode ? Colors.white10 : Colors.black.withValues(alpha: 0.05),
                                       shape: BoxShape.circle,
                                     ),
                                     child: Icon(Icons.arrow_forward_ios, size: 16, color: isDarkMode ? Colors.white70 : Colors.black54),

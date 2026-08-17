@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../providers/language_provider.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'news_list_screen.dart';
 import '../widgets/auto_translated_text.dart';
 import 'dart:ui';
 
 class NewsSourceScreen extends StatelessWidget {
-  const NewsSourceScreen({Key? key}) : super(key: key);
+  const NewsSourceScreen({super.key});
 
   final List<Map<String, String>> sources = const [
     {'id': 'prothom_alo', 'name': 'প্রথম আলো', 'logoUrl': 'https://www.google.com/s2/favicons?domain=prothomalo.com&sz=128', 'logo': 'P', 'color': '#0083C5'},
@@ -42,7 +40,7 @@ class NewsSourceScreen extends StatelessWidget {
             child: Container(color: Colors.transparent),
           ),
         ),
-        backgroundColor: isDarkMode ? Colors.black.withOpacity(0.4) : Colors.white.withOpacity(0.4),
+        backgroundColor: isDarkMode ? Colors.black.withValues(alpha: 0.4) : Colors.white.withValues(alpha: 0.4),
         elevation: 0,
         title: AutoTranslatedText('পত্রিকা বাছাই করুন', style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
         iconTheme: IconThemeData(color: isDarkMode ? Colors.white : Colors.black),
@@ -99,14 +97,14 @@ class NewsSourceScreen extends StatelessWidget {
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                               colors: [
-                                baseColor.withOpacity(isDarkMode ? 0.9 : 0.8),
-                                baseColor.withOpacity(isDarkMode ? 0.6 : 0.5),
+                                baseColor.withValues(alpha: isDarkMode ? 0.9 : 0.8),
+                                baseColor.withValues(alpha: isDarkMode ? 0.6 : 0.5),
                               ],
                             ),
                             border: Border.all(color: Colors.white24, width: 1.5),
                             boxShadow: [
                               BoxShadow(
-                                color: baseColor.withOpacity(0.3),
+                                color: baseColor.withValues(alpha: 0.3),
                                 blurRadius: 15,
                                 offset: const Offset(0, 8),
                               )
@@ -125,7 +123,7 @@ class NewsSourceScreen extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(16),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.1),
+                                      color: Colors.black.withValues(alpha: 0.1),
                                       blurRadius: 5,
                                       offset: const Offset(0, 2),
                                     )

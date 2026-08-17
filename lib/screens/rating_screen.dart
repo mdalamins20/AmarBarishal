@@ -25,7 +25,7 @@ class _RatingScreenState extends State<RatingScreen> {
             child: Container(color: Colors.transparent),
           ),
         ),
-        backgroundColor: isDarkMode ? Colors.black.withOpacity(0.4) : Colors.white.withOpacity(0.4),
+        backgroundColor: isDarkMode ? Colors.black.withValues(alpha: 0.4) : Colors.white.withValues(alpha: 0.4),
         title: Text('রেটিং দিন (Rate Us)', style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
         iconTheme: IconThemeData(color: isDarkMode ? Colors.white : Colors.black),
         elevation: 0,
@@ -53,13 +53,13 @@ class _RatingScreenState extends State<RatingScreen> {
                   borderRadius: BorderRadius.circular(30),
                   gradient: LinearGradient(
                     colors: isDarkMode 
-                      ? [Colors.white.withOpacity(0.1), Colors.white.withOpacity(0.05)]
-                      : [Colors.white.withOpacity(0.8), Colors.white.withOpacity(0.5)],
+                      ? [Colors.white.withValues(alpha: 0.1), Colors.white.withValues(alpha: 0.05)]
+                      : [Colors.white.withValues(alpha: 0.8), Colors.white.withValues(alpha: 0.5)],
                   ),
                   border: Border.all(color: isDarkMode ? Colors.white24 : Colors.white, width: 2),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Colors.black.withValues(alpha: 0.1),
                       blurRadius: 20,
                       spreadRadius: 5,
                     )

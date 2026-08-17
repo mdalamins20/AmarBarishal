@@ -12,11 +12,11 @@ class NewsListScreen extends StatefulWidget {
   final Color color;
 
   const NewsListScreen({
-    Key? key,
+    super.key,
     required this.sourceId,
     required this.sourceName,
     required this.color,
-  }) : super(key: key);
+  });
 
   @override
   State<NewsListScreen> createState() => _NewsListScreenState();
@@ -61,11 +61,11 @@ class _NewsListScreenState extends State<NewsListScreen> {
         margin: const EdgeInsets.only(bottom: 16.0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          color: isDarkMode ? Colors.white.withOpacity(0.05) : Colors.white,
+          color: isDarkMode ? Colors.white.withValues(alpha: 0.05) : Colors.white,
           border: Border.all(color: isDarkMode ? Colors.white12 : Colors.black12, width: 1),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(isDarkMode ? 0.2 : 0.05),
+              color: Colors.black.withValues(alpha: isDarkMode ? 0.2 : 0.05),
               blurRadius: 10,
               offset: const Offset(0, 4),
             )
@@ -112,7 +112,7 @@ class _NewsListScreenState extends State<NewsListScreen> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
-                          color: widget.color.withOpacity(0.1),
+                          color: widget.color.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: AutoTranslatedText(
@@ -154,7 +154,7 @@ class _NewsListScreenState extends State<NewsListScreen> {
             child: Container(color: Colors.transparent),
           ),
         ),
-        backgroundColor: isDarkMode ? Colors.black.withOpacity(0.4) : Colors.white.withOpacity(0.4),
+        backgroundColor: isDarkMode ? Colors.black.withValues(alpha: 0.4) : Colors.white.withValues(alpha: 0.4),
         elevation: 0,
         title: AutoTranslatedText(widget.sourceName, style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
         iconTheme: IconThemeData(color: isDarkMode ? Colors.white : Colors.black),
@@ -178,7 +178,7 @@ class _NewsListScreenState extends State<NewsListScreen> {
                   width: double.infinity,
                   height: 55,
                   decoration: BoxDecoration(
-                    color: isDarkMode ? Colors.white.withOpacity(0.1) : Colors.white.withOpacity(0.5),
+                    color: isDarkMode ? Colors.white.withValues(alpha: 0.1) : Colors.white.withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(color: isDarkMode ? Colors.white24 : Colors.white),
                   ),

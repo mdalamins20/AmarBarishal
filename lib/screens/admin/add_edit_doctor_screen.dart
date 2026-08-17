@@ -137,7 +137,7 @@ class _AddEditDoctorScreenState extends State<AddEditDoctorScreen> with SingleTi
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accentColor = Colors.blueAccent;
+    const accentColor = Colors.blueAccent;
 
     return Scaffold(
       backgroundColor: isDark ? const Color(0xFF0F1219) : const Color(0xFFF4F6FA),
@@ -172,7 +172,7 @@ class _AddEditDoctorScreenState extends State<AddEditDoctorScreen> with SingleTi
                       height: 250,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: accentColor.withOpacity(0.12),
+                        color: accentColor.withValues(alpha: 0.12),
                       ),
                     ),
                   ),
@@ -184,12 +184,12 @@ class _AddEditDoctorScreenState extends State<AddEditDoctorScreen> with SingleTi
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
                           decoration: BoxDecoration(
-                            color: accentColor.withOpacity(0.15),
+                            color: accentColor.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(30),
                           ),
                           child: Text(
                             _isEditing ? 'সম্পাদনা' : 'নতুন তথ্য',
-                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: accentColor, letterSpacing: 0.5),
+                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: accentColor, letterSpacing: 0.5),
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -221,7 +221,7 @@ class _AddEditDoctorScreenState extends State<AddEditDoctorScreen> with SingleTi
                           color: isDark ? const Color(0xFF1E2533) : Colors.white,
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
-                            BoxShadow(color: Colors.black.withOpacity(isDark ? 0.25 : 0.05), blurRadius: 20, offset: const Offset(0, 6)),
+                            BoxShadow(color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.05), blurRadius: 20, offset: const Offset(0, 6)),
                           ],
                         ),
                         child: Column(
@@ -273,7 +273,7 @@ class _AddEditDoctorScreenState extends State<AddEditDoctorScreen> with SingleTi
                           color: isDark ? const Color(0xFF1E2533) : Colors.white,
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
-                            BoxShadow(color: Colors.black.withOpacity(isDark ? 0.25 : 0.05), blurRadius: 20, offset: const Offset(0, 6)),
+                            BoxShadow(color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.05), blurRadius: 20, offset: const Offset(0, 6)),
                           ],
                         ),
                         child: Column(
@@ -314,7 +314,7 @@ class _AddEditDoctorScreenState extends State<AddEditDoctorScreen> with SingleTi
                         width: double.infinity,
                         height: 58,
                         child: _isLoading
-                            ? Center(child: CircularProgressIndicator(color: accentColor))
+                            ? const Center(child: CircularProgressIndicator(color: accentColor))
                             : ElevatedButton(
                                 onPressed: _saveItem,
                                 style: ElevatedButton.styleFrom(

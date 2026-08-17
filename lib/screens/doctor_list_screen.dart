@@ -8,10 +8,10 @@ class DoctorListScreen extends StatefulWidget {
   final String categoryDocId;
 
   const DoctorListScreen({
-    Key? key,
+    super.key,
     required this.specialtyName,
     required this.categoryDocId,
-  }) : super(key: key);
+  });
 
   @override
   State<DoctorListScreen> createState() => _DoctorListScreenState();
@@ -130,7 +130,7 @@ class _DoctorListScreenState extends State<DoctorListScreen> {
         border: Border.all(color: borderColor),
         boxShadow: isDarkMode ? [] : [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           )
@@ -150,7 +150,7 @@ class _DoctorListScreenState extends State<DoctorListScreen> {
                     height: 100,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: Colors.blueAccent.withOpacity(0.3), width: 2),
+                      border: Border.all(color: Colors.blueAccent.withValues(alpha: 0.3), width: 2),
                     ),
                     child: ClipOval(
                       child: Image.network(
@@ -167,7 +167,7 @@ class _DoctorListScreenState extends State<DoctorListScreen> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: isDarkMode ? Colors.white10 : Colors.grey.shade200,
-                      border: Border.all(color: Colors.blueAccent.withOpacity(0.3), width: 2),
+                      border: Border.all(color: Colors.blueAccent.withValues(alpha: 0.3), width: 2),
                     ),
                     child: Icon(Icons.person, size: 60, color: isDarkMode ? Colors.white30 : Colors.grey.shade400),
                   ),
@@ -222,7 +222,7 @@ class _DoctorListScreenState extends State<DoctorListScreen> {
               children: [
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 12),
-                  color: isDarkMode ? Colors.white.withOpacity(0.02) : Colors.grey.shade50,
+                  color: isDarkMode ? Colors.white.withValues(alpha: 0.02) : Colors.grey.shade50,
                   child: Center(
                     child: AutoTranslatedText(
                       "Chamber & Appointment",
@@ -292,13 +292,13 @@ class _DoctorListScreenState extends State<DoctorListScreen> {
                 Divider(color: borderColor, height: 1),
               ],
             );
-          }).toList(),
+          }),
           
           // About Section at the bottom
           if (about.isNotEmpty) ...[
             Container(
               padding: const EdgeInsets.symmetric(vertical: 12),
-              color: isDarkMode ? Colors.white.withOpacity(0.02) : Colors.grey.shade50,
+              color: isDarkMode ? Colors.white.withValues(alpha: 0.02) : Colors.grey.shade50,
               child: Center(
                 child: AutoTranslatedText(
                   "About $name",

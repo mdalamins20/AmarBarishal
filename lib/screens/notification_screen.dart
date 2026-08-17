@@ -37,7 +37,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
             child: Container(color: Colors.transparent),
           ),
         ),
-        backgroundColor: isDarkMode ? Colors.black.withOpacity(0.4) : Colors.white.withOpacity(0.4),
+        backgroundColor: isDarkMode ? Colors.black.withValues(alpha: 0.4) : Colors.white.withValues(alpha: 0.4),
         title: Text(
           'নোটিফিকেশন', 
           style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)
@@ -79,7 +79,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       Container(
                         padding: const EdgeInsets.all(24),
                         decoration: BoxDecoration(
-                          color: isDarkMode ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05),
+                          color: isDarkMode ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(Icons.notifications_off_rounded, size: 80, color: isDarkMode ? Colors.white30 : Colors.black26),
@@ -134,13 +134,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
                               borderRadius: BorderRadius.circular(16),
                               gradient: LinearGradient(
                                 colors: isDarkMode 
-                                  ? [Colors.white.withOpacity(0.08), Colors.white.withOpacity(0.03)]
-                                  : [Colors.white.withOpacity(0.8), Colors.white.withOpacity(0.4)],
+                                  ? [Colors.white.withValues(alpha: 0.08), Colors.white.withValues(alpha: 0.03)]
+                                  : [Colors.white.withValues(alpha: 0.8), Colors.white.withValues(alpha: 0.4)],
                               ),
                               border: Border.all(color: isDarkMode ? Colors.white12 : Colors.white, width: 1.5),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.05),
+                                  color: Colors.black.withValues(alpha: 0.05),
                                   blurRadius: 10,
                                   spreadRadius: 1,
                                 )
@@ -158,7 +158,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                       Container(
                                         padding: const EdgeInsets.all(10),
                                         decoration: BoxDecoration(
-                                          color: Colors.blueAccent.withOpacity(0.2),
+                                          color: Colors.blueAccent.withValues(alpha: 0.2),
                                           shape: BoxShape.circle,
                                         ),
                                         child: const Icon(Icons.notifications_active_rounded, color: Colors.blueAccent, size: 24),

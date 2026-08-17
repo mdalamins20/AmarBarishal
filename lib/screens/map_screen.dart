@@ -100,7 +100,7 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final primaryColor = const Color(0xFF0F4C81);
+    const primaryColor = Color(0xFF0F4C81);
     final bgColor = isDarkMode ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC);
 
     return Scaffold(
@@ -121,14 +121,14 @@ class _MapScreenState extends State<MapScreen> {
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [primaryColor, primaryColor.withOpacity(0.8)],
+                  colors: [primaryColor, primaryColor.withValues(alpha: 0.8)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: primaryColor.withOpacity(0.3),
+                    color: primaryColor.withValues(alpha: 0.3),
                     blurRadius: 15,
                     offset: const Offset(0, 8),
                   )
@@ -231,10 +231,10 @@ class _MapScreenState extends State<MapScreen> {
           decoration: BoxDecoration(
             color: isDarkMode ? const Color(0xFF1E293B) : Colors.white,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: iconColor.withOpacity(0.3)),
+            border: Border.all(color: iconColor.withValues(alpha: 0.3)),
             boxShadow: [
               BoxShadow(
-                color: iconColor.withOpacity(0.05),
+                color: iconColor.withValues(alpha: 0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               )
@@ -245,7 +245,7 @@ class _MapScreenState extends State<MapScreen> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: iconColor.withOpacity(0.1),
+                  color: iconColor.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(icon, color: iconColor, size: 28),

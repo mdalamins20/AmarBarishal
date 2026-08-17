@@ -121,11 +121,11 @@ class _AddEditItemScreenState extends State<AddEditItemScreen>
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Row(
+              content: const Row(
                 children: [
-                  const Icon(Icons.error_rounded, color: Colors.white),
-                  const SizedBox(width: 12),
-                  const Text('কোনো সমস্যা হয়েছে, আবার চেষ্টা করুন।'),
+                  Icon(Icons.error_rounded, color: Colors.white),
+                  SizedBox(width: 12),
+                  Text('কোনো সমস্যা হয়েছে, আবার চেষ্টা করুন।'),
                 ],
               ),
               backgroundColor: Colors.red.shade600,
@@ -155,7 +155,7 @@ class _AddEditItemScreenState extends State<AddEditItemScreen>
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accentColor = const Color(0xFF6C63FF);
+    const accentColor = Color(0xFF6C63FF);
 
     return Scaffold(
       backgroundColor: isDark ? const Color(0xFF0F1219) : const Color(0xFFF4F6FA),
@@ -195,7 +195,7 @@ class _AddEditItemScreenState extends State<AddEditItemScreen>
                       height: 250,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: accentColor.withOpacity(0.12),
+                        color: accentColor.withValues(alpha: 0.12),
                       ),
                     ),
                   ),
@@ -207,7 +207,7 @@ class _AddEditItemScreenState extends State<AddEditItemScreen>
                       height: 150,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.teal.withOpacity(0.08),
+                        color: Colors.teal.withValues(alpha: 0.08),
                       ),
                     ),
                   ),
@@ -219,12 +219,12 @@ class _AddEditItemScreenState extends State<AddEditItemScreen>
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
                           decoration: BoxDecoration(
-                            color: accentColor.withOpacity(0.15),
+                            color: accentColor.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(30),
                           ),
                           child: Text(
                             _isEditing ? 'সম্পাদনা' : 'নতুন তথ্য',
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
                               color: accentColor,
@@ -345,7 +345,7 @@ class _AddEditItemScreenState extends State<AddEditItemScreen>
                         width: double.infinity,
                         height: 58,
                         child: _isLoading
-                            ? Center(
+                            ? const Center(
                                 child: SizedBox(
                                   width: 28,
                                   height: 28,
@@ -361,7 +361,7 @@ class _AddEditItemScreenState extends State<AddEditItemScreen>
                                   backgroundColor: accentColor,
                                   foregroundColor: Colors.white,
                                   elevation: 8,
-                                  shadowColor: accentColor.withOpacity(0.4),
+                                  shadowColor: accentColor.withValues(alpha: 0.4),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(18),
                                   ),
@@ -418,7 +418,7 @@ class _AddEditItemScreenState extends State<AddEditItemScreen>
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.25 : 0.06),
+            color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.06),
             blurRadius: 20,
             offset: const Offset(0, 6),
           ),

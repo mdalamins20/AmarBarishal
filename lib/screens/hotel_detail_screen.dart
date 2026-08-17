@@ -1,6 +1,5 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import '../widgets/auto_translated_text.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -113,7 +112,7 @@ class HotelDetailScreen extends StatelessWidget {
             child: Container(color: Colors.transparent),
           ),
         ),
-        backgroundColor: Colors.black.withOpacity(0.2),
+        backgroundColor: Colors.black.withValues(alpha: 0.2),
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
@@ -308,7 +307,7 @@ class HotelDetailScreen extends StatelessWidget {
                             border: Border.all(color: isDarkMode ? Colors.white12 : Colors.grey.shade300),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(isDarkMode ? 0.3 : 0.05),
+                                color: Colors.black.withValues(alpha: isDarkMode ? 0.3 : 0.05),
                                 blurRadius: 10,
                                 offset: const Offset(0, 5),
                               )
@@ -435,7 +434,7 @@ class HotelDetailScreen extends StatelessWidget {
                                 border: Border.all(color: isDarkMode ? Colors.white12 : Colors.grey.shade300),
                                 boxShadow: isDarkMode ? [] : [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.03),
+                                    color: Colors.black.withValues(alpha: 0.03),
                                     blurRadius: 5,
                                     offset: const Offset(0, 2),
                                   )

@@ -8,7 +8,7 @@ import re
 def parse_fire_stations():
     url = "https://fireservice.barisal.gov.bd/pages/static-pages/697895c935ce18e1c066b9ae"
     headers = {'User-Agent': 'Mozilla/5.0'}
-    response = requests.get(url, headers=headers, verify=False)
+    response = requests.get(url, headers=headers, verify=True)
     soup = BeautifulSoup(response.content, 'html.parser')
     
     tables = soup.find_all('table')

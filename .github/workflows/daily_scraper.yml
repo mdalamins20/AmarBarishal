@@ -1,0 +1,36 @@
+name: Daily Data Scraper
+
+on:
+  schedule:
+    # Runs at 02:00 UTC every day (08:00 AM Bangladesh Time)
+    - cron: '0 2 * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub UI
+
+jobs:
+  scrape-news:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+        cache: 'pip'
+
+    - name: Install dependencies
+      run: |
+        cd scraper_scripts
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Create serviceAccountKey.json
+      run: |
+        echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > scraper_scripts/serviceAccountKey.json
+
+    - name: Run News Scraper
+      run: |
+        cd scraper_scripts
+        python fetch_news.py

@@ -50,7 +50,7 @@ class FireServiceDetailScreen extends StatelessWidget {
             child: Container(color: Colors.transparent),
           ),
         ),
-        backgroundColor: isDarkMode ? Colors.black.withOpacity(0.4) : Colors.white.withOpacity(0.4),
+        backgroundColor: isDarkMode ? Colors.black.withValues(alpha: 0.4) : Colors.white.withValues(alpha: 0.4),
         elevation: 0,
         title: AutoTranslatedText(
           name, 
@@ -79,15 +79,15 @@ class FireServiceDetailScreen extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: isDarkMode ? Colors.red.shade900.withOpacity(0.3) : Colors.red.shade100,
+                    color: isDarkMode ? Colors.red.shade900.withValues(alpha: 0.3) : Colors.red.shade100,
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: isDarkMode ? Colors.redAccent.withOpacity(0.5) : Colors.redAccent,
+                      color: isDarkMode ? Colors.redAccent.withValues(alpha: 0.5) : Colors.redAccent,
                       width: 2
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.redAccent.withOpacity(0.3),
+                        color: Colors.redAccent.withValues(alpha: 0.3),
                         blurRadius: 20,
                         spreadRadius: 5,
                       )
@@ -138,13 +138,13 @@ class FireServiceDetailScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                     gradient: LinearGradient(
                       colors: isDarkMode 
-                        ? [Colors.white.withOpacity(0.08), Colors.white.withOpacity(0.03)]
-                        : [Colors.white.withOpacity(0.9), Colors.white.withOpacity(0.6)],
+                        ? [Colors.white.withValues(alpha: 0.08), Colors.white.withValues(alpha: 0.03)]
+                        : [Colors.white.withValues(alpha: 0.9), Colors.white.withValues(alpha: 0.6)],
                     ),
                     border: Border.all(color: isDarkMode ? Colors.white12 : Colors.white, width: 1.5),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withValues(alpha: 0.1),
                         blurRadius: 15,
                         spreadRadius: 2,
                       )
@@ -201,7 +201,7 @@ class FireServiceDetailScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
         ),
         elevation: 8,
-        shadowColor: Colors.redAccent.withOpacity(0.5),
+        shadowColor: Colors.redAccent.withValues(alpha: 0.5),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -209,7 +209,7 @@ class FireServiceDetailScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
             child: const Icon(Icons.call_rounded, size: 24),

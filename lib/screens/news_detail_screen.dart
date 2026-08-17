@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import '../widgets/auto_translated_text.dart';
@@ -64,7 +63,7 @@ class NewsDetailScreen extends StatelessWidget {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 10,
                       offset: const Offset(0, -5),
                     )
@@ -79,7 +78,7 @@ class NewsDetailScreen extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(
-                            color: Colors.redAccent.withOpacity(0.1),
+                            color: Colors.redAccent.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: AutoTranslatedText(
@@ -148,7 +147,7 @@ class NewsDetailScreen extends StatelessWidget {
         top: 16,
         left: 16,
         child: CircleAvatar(
-          backgroundColor: Colors.black.withOpacity(0.4),
+          backgroundColor: Colors.black.withValues(alpha: 0.4),
           child: IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
             onPressed: () => Navigator.of(context).pop(),
@@ -159,7 +158,7 @@ class NewsDetailScreen extends StatelessWidget {
         top: 16,
         right: 16,
         child: CircleAvatar(
-          backgroundColor: Colors.black.withOpacity(0.4),
+          backgroundColor: Colors.black.withValues(alpha: 0.4),
           child: IconButton(
             icon: const Icon(Icons.share_rounded, color: Colors.white, size: 20),
             onPressed: () {

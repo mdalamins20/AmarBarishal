@@ -43,7 +43,7 @@ class PalliBidyutScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         border: Border(left: BorderSide(color: color, width: 4)),
         borderRadius: const BorderRadius.only(
           topRight: Radius.circular(8),
@@ -194,7 +194,7 @@ class PalliBidyutScreen extends StatelessWidget {
                 ...row.map((cell) => Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Text(cell),
-                )).toList(),
+                )),
               ],
             );
           }),

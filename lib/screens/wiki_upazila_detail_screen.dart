@@ -1,8 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../widgets/auto_translated_text.dart';
-import 'category_detail_screen.dart';
 
 class WikiUpazilaDetailScreen extends StatelessWidget {
   final Map<String, dynamic> upazilaData;
@@ -137,13 +135,13 @@ class WikiUpazilaDetailScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         gradient: LinearGradient(
           colors: isDarkMode 
-            ? [Colors.white.withOpacity(0.05), Colors.white.withOpacity(0.02)]
-            : [Colors.white.withOpacity(0.9), Colors.white.withOpacity(0.7)],
+            ? [Colors.white.withValues(alpha: 0.05), Colors.white.withValues(alpha: 0.02)]
+            : [Colors.white.withValues(alpha: 0.9), Colors.white.withValues(alpha: 0.7)],
         ),
         border: Border.all(color: isDarkMode ? Colors.white12 : Colors.white, width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             spreadRadius: 1,
           )
@@ -172,7 +170,7 @@ class WikiUpazilaDetailScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 15,
                     height: 1.6,
-                    color: isDarkMode ? Colors.white.withOpacity(0.85) : Colors.black87,
+                    color: isDarkMode ? Colors.white.withValues(alpha: 0.85) : Colors.black87,
                   ),
                 ),
               ],

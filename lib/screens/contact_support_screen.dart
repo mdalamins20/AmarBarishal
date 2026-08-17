@@ -18,7 +18,7 @@ class ContactSupportScreen extends StatelessWidget {
             child: Container(color: Colors.transparent),
           ),
         ),
-        backgroundColor: isDarkMode ? Colors.black.withOpacity(0.4) : Colors.white.withOpacity(0.4),
+        backgroundColor: isDarkMode ? Colors.black.withValues(alpha: 0.4) : Colors.white.withValues(alpha: 0.4),
         title: Text('যোগাযোগ ও সাপোর্ট', style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
         iconTheme: IconThemeData(color: isDarkMode ? Colors.white : Colors.black),
         elevation: 0,
@@ -120,13 +120,13 @@ class ContactSupportScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         gradient: LinearGradient(
           colors: isDarkMode 
-            ? [Colors.white.withOpacity(0.05), Colors.white.withOpacity(0.02)]
-            : [Colors.white.withOpacity(0.8), Colors.white.withOpacity(0.4)],
+            ? [Colors.white.withValues(alpha: 0.05), Colors.white.withValues(alpha: 0.02)]
+            : [Colors.white.withValues(alpha: 0.8), Colors.white.withValues(alpha: 0.4)],
         ),
         border: Border.all(color: isDarkMode ? Colors.white12 : Colors.white, width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 15,
             spreadRadius: 2,
           )
@@ -141,7 +141,7 @@ class ContactSupportScreen extends StatelessWidget {
             leading: Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.2),
+                color: color.withValues(alpha: 0.2),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: color, size: 28),

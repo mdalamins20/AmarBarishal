@@ -56,7 +56,7 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: (isDarkMode ? Colors.black : const Color(0xFF0F4C81)).withOpacity(0.3),
+                        color: (isDarkMode ? Colors.black : const Color(0xFF0F4C81)).withValues(alpha: 0.3),
                         blurRadius: 20,
                         offset: const Offset(0, 10),
                       )
@@ -71,7 +71,7 @@ class ProfileScreen extends StatelessWidget {
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
+                              color: Colors.black.withValues(alpha: 0.2),
                               blurRadius: 15,
                               spreadRadius: 2,
                             )
@@ -98,7 +98,7 @@ class ProfileScreen extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
@@ -237,7 +237,7 @@ class ProfileScreen extends StatelessWidget {
     required IconData icon, required String title, required VoidCallback onTap, required bool isDarkMode, Color? iconColor, bool isLogout = false
   }) {
     final bgColor = isDarkMode ? const Color(0xFF1E293B) : Colors.white;
-    final shadowColor = isDarkMode ? Colors.black.withOpacity(0.2) : Colors.black.withOpacity(0.04);
+    final shadowColor = isDarkMode ? Colors.black.withValues(alpha: 0.2) : Colors.black.withValues(alpha: 0.04);
     final iColor = iconColor ?? (isDarkMode ? Colors.white70 : Colors.black87);
 
     return Container(
@@ -252,15 +252,15 @@ class ProfileScreen extends StatelessWidget {
             offset: const Offset(0, 4),
           )
         ],
-        border: isLogout ? Border.all(color: Colors.redAccent.withOpacity(0.5), width: 1) : null,
+        border: isLogout ? Border.all(color: Colors.redAccent.withValues(alpha: 0.5), width: 1) : null,
       ),
       child: Material(
         color: Colors.transparent,
         borderRadius: BorderRadius.circular(16),
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
-          splashColor: iColor.withOpacity(0.1),
-          highlightColor: iColor.withOpacity(0.05),
+          splashColor: iColor.withValues(alpha: 0.1),
+          highlightColor: iColor.withValues(alpha: 0.05),
           onTap: onTap,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -269,7 +269,7 @@ class ProfileScreen extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: iColor.withOpacity(0.1),
+                    color: iColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(icon, size: 24, color: iColor),

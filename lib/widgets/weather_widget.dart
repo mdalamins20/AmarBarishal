@@ -62,7 +62,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: widget.isDark ? Colors.white10 : Colors.black.withOpacity(0.05),
+        color: widget.isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: widget.isDark ? Colors.white24 : Colors.black12,

@@ -27,7 +27,7 @@ class AdminUpazilaListScreen extends StatelessWidget {
             child: Container(color: Colors.transparent),
           ),
         ),
-        backgroundColor: isDarkMode ? Colors.black.withOpacity(0.4) : Colors.white.withOpacity(0.4),
+        backgroundColor: isDarkMode ? Colors.black.withValues(alpha: 0.4) : Colors.white.withValues(alpha: 0.4),
         elevation: 0,
         title: Text('$categoryTitle নির্বাচন', style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
         iconTheme: IconThemeData(color: isDarkMode ? Colors.white : Colors.black),
@@ -70,7 +70,7 @@ class AdminUpazilaListScreen extends StatelessWidget {
                           child: Card(
                             margin: const EdgeInsets.only(bottom: 12),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                            color: isDarkMode ? Colors.white.withOpacity(0.05) : Colors.white.withOpacity(0.8),
+                            color: isDarkMode ? Colors.white.withValues(alpha: 0.05) : Colors.white.withValues(alpha: 0.8),
                             elevation: 0,
                             child: ListTile(
                               contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),

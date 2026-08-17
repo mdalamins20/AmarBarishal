@@ -17,8 +17,6 @@ import concurrent.futures
 import firebase_admin
 from firebase_admin import credentials, firestore
 
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
 CACHE = {}
 CACHE_TTL = 3600  # 1 hour cache
 
@@ -26,7 +24,13 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    # allow_origins=["*"] is dangerous for production. Use specific domains instead.
+    allow_origins=[
+        "http://localhost", 
+        "http://localhost:8000", 
+        "http://127.0.0.1:8000",
+        "https://amarbarishal.web.app", # Add your actual production domains here
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -84,7 +88,7 @@ import base64
 
 def get_pdf_links(url):
     try:
-        response = requests.get(url, verify=False) 
+        response = requests.get(url, verify=True) 
         soup = BeautifulSoup(response.content, 'html.parser')
         
         pdf_links = []
@@ -117,7 +121,7 @@ def get_pdf_links(url):
 
 def extract_data_from_html_table(url):
     try:
-        response = requests.get(url, verify=False)
+        response = requests.get(url, verify=True)
         soup = BeautifulSoup(response.content, 'html.parser')
         
         extracted_data = []
@@ -228,7 +232,7 @@ def extract_data_from_html_table(url):
 
 def extract_hospital_data(url):
     try:
-        response = requests.get(url, verify=False)
+        response = requests.get(url, verify=True)
         soup = BeautifulSoup(response.content, 'html.parser')
         
         extracted_data = []
@@ -307,7 +311,7 @@ def extract_hospital_data(url):
 
 def extract_data_from_pdf(pdf_url):
     try:
-        response = requests.get(pdf_url, verify=False)
+        response = requests.get(pdf_url, verify=True)
         pdf_file = io.BytesIO(response.content)
         
         extracted_data = []
@@ -429,7 +433,7 @@ async def test_endpoint():
 async def debug_ambu():
     url = "https://roktospondon.com/ambulance"
     headers = {'User-Agent': 'Mozilla/5.0'}
-    response = requests.get(url, headers=headers, verify=False, timeout=20)
+    response = requests.get(url, headers=headers, verify=True, timeout=20)
     return {"html": response.text}
 
 @app.get("/api/categories/{category_id}/items")
@@ -793,7 +797,9 @@ def get_news(date: str = Query(None), source_id: str = Query(None)):
 
     # 2. Existing Local WordPress Scraping
     if run_wp:
-        def scrape_wp_site(base_url, source_name):
+        def scrape_wp_site(wp_source):
+            source_name = wp_source["name"]
+            base_url = wp_source["url"]
             try:
                 url = base_url
                 if date:
@@ -827,8 +833,8 @@ def get_news(date: str = Query(None), source_id: str = Query(None)):
             except Exception as e:
                 print(f"Error {source_name}:", e)
 
-        for wp_source in run_wp:
-            scrape_wp_site(wp_source["url"], wp_source["name"])
+        with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+            executor.map(scrape_wp_site, run_wp)
 
     return {"status": "success", "data": news_items}
 

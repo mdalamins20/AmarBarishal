@@ -6,8 +6,7 @@ import 'package:provider/provider.dart';
 import '../providers/language_provider.dart';
 
 class SettingsScreen extends StatefulWidget {
-  final VoidCallback? onThemeChanged;
-  const SettingsScreen({super.key, this.onThemeChanged});
+  const SettingsScreen({super.key});
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
@@ -133,7 +132,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accentColor = const Color(0xFF6C63FF);
+    const accentColor = Color(0xFF6C63FF);
     final lang = Provider.of<LanguageProvider>(context);
 
     return Scaffold(
@@ -174,7 +173,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     top: -50, right: -50,
                     child: Container(
                       width: 200, height: 200,
-                      decoration: BoxDecoration(shape: BoxShape.circle, color: accentColor.withOpacity(0.08)),
+                      decoration: BoxDecoration(shape: BoxShape.circle, color: accentColor.withValues(alpha: 0.08)),
                     ),
                   ),
                 ],
@@ -202,14 +201,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                            decoration: BoxDecoration(
                              shape: BoxShape.circle,
                              color: isDark ? Colors.black26 : Colors.white,
-                             boxShadow: [BoxShadow(color: accentColor.withOpacity(isDark ? 0.3 : 0.15), blurRadius: 20, offset: const Offset(0, 8))],
+                             boxShadow: [BoxShadow(color: accentColor.withValues(alpha: isDark ? 0.3 : 0.15), blurRadius: 20, offset: const Offset(0, 8))],
                            ),
                            child: ClipRRect(
                              borderRadius: BorderRadius.circular(50),
                              child: Image.asset(
                                'assets/icon/icon.png',
                                fit: BoxFit.cover,
-                               errorBuilder: (context, error, stackTrace) => Icon(Icons.location_city_rounded, size: 40, color: accentColor),
+                               errorBuilder: (context, error, stackTrace) => const Icon(Icons.location_city_rounded, size: 40, color: accentColor),
                              ),
                            ),
                         ),
@@ -343,7 +342,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E2533) : Colors.white,
         borderRadius: BorderRadius.circular(24),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(isDark ? 0.2 : 0.05), blurRadius: 15, offset: const Offset(0, 5))],
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05), blurRadius: 15, offset: const Offset(0, 5))],
       ),
       child: Column(children: children),
     );
@@ -367,7 +366,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             children: [
               Container(
                 padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(color: iconColor.withOpacity(isDark ? 0.15 : 0.1), borderRadius: BorderRadius.circular(16)),
+                decoration: BoxDecoration(color: iconColor.withValues(alpha: isDark ? 0.15 : 0.1), borderRadius: BorderRadius.circular(16)),
                 child: Icon(icon, color: iconColor, size: 24),
               ),
               const SizedBox(width: 16),

@@ -12,7 +12,7 @@ def scrape_ambulances():
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
     }
     
-    response = requests.get(url, headers=headers, verify=False)
+    response = requests.get(url, headers=headers, verify=True)
     soup = BeautifulSoup(response.content, 'html.parser')
     
     text = soup.get_text(separator='\n')

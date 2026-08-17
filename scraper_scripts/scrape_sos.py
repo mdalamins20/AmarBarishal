@@ -3,9 +3,6 @@ from bs4 import BeautifulSoup
 import firebase_admin
 from firebase_admin import credentials, firestore
 import os
-import urllib3
-
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 try:
     cred = credentials.Certificate(os.path.join(os.path.dirname(__file__), 'serviceAccountKey.json'))
@@ -21,7 +18,7 @@ def scrape_and_upload_sos():
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
     }
     
-    response = requests.get(url, headers=headers, verify=False)
+    response = requests.get(url, headers=headers, verify=True)
     soup = BeautifulSoup(response.text, 'html.parser')
     
     table = soup.find('table')

@@ -80,7 +80,7 @@ class ItemDetailScreen extends StatelessWidget {
             child: Container(color: Colors.transparent),
           ),
         ),
-        backgroundColor: isDarkMode ? Colors.black.withOpacity(0.4) : Colors.white.withOpacity(0.4),
+        backgroundColor: isDarkMode ? Colors.black.withValues(alpha: 0.4) : Colors.white.withValues(alpha: 0.4),
         elevation: 0,
         title: AutoTranslatedText(name, style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
         iconTheme: IconThemeData(color: isDarkMode ? Colors.white : Colors.black),
@@ -104,13 +104,13 @@ class ItemDetailScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
                 gradient: LinearGradient(
                   colors: isDarkMode 
-                    ? [Colors.white.withOpacity(0.05), Colors.white.withOpacity(0.02)]
-                    : [Colors.white.withOpacity(0.8), Colors.white.withOpacity(0.4)],
+                    ? [Colors.white.withValues(alpha: 0.05), Colors.white.withValues(alpha: 0.02)]
+                    : [Colors.white.withValues(alpha: 0.8), Colors.white.withValues(alpha: 0.4)],
                 ),
                 border: Border.all(color: isDarkMode ? Colors.white12 : Colors.white, width: 1.5),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 15,
                     spreadRadius: 2,
                   )
@@ -236,7 +236,7 @@ class ItemDetailScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.2),
+                color: color.withValues(alpha: 0.2),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: isDarkMode ? color : Color.lerp(color, Colors.black, 0.45)!, size: 24),
@@ -270,7 +270,7 @@ class ItemDetailScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.2),
+                color: color.withValues(alpha: 0.2),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: isDarkMode ? color : Color.lerp(color, Colors.black, 0.45)!, size: 24),
@@ -294,7 +294,7 @@ class ItemDetailScreen extends StatelessWidget {
               ),
             ],
           ),
-        )).toList(),
+        )),
       ],
     );
   }
@@ -308,7 +308,7 @@ class ItemDetailScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.green.withOpacity(0.2),
+                color: Colors.green.withValues(alpha: 0.2),
                 shape: BoxShape.circle,
               ),
               child: Icon(Icons.phone_rounded, color: isDarkMode ? Colors.greenAccent : Colors.green.shade700, size: 24),
@@ -357,7 +357,7 @@ class ItemDetailScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.purple.withOpacity(0.2),
+                color: Colors.purple.withValues(alpha: 0.2),
                 shape: BoxShape.circle,
               ),
               child: Icon(Icons.map_rounded, color: isDarkMode ? Colors.purpleAccent : Colors.purple.shade700, size: 24),

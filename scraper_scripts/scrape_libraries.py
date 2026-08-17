@@ -3,10 +3,7 @@ from bs4 import BeautifulSoup
 import firebase_admin
 from firebase_admin import credentials, firestore
 import os
-import urllib3
 import re
-
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 try:
     cred = credentials.Certificate(os.path.join(os.path.dirname(__file__), 'serviceAccountKey.json'))
@@ -19,7 +16,7 @@ db = firestore.client()
 def scrape_libraries():
     url = "https://barisal.gov.bd/pages/static-pages/6978958635ce18e1c0669ec9"
     try:
-        response = requests.get(url, verify=False, timeout=15)
+        response = requests.get(url, verify=True, timeout=15)
         response.raise_for_status()
     except Exception as e:
         print(f"Error fetching URL: {e}")

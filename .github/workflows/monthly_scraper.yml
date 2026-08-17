@@ -1,0 +1,52 @@
+name: Monthly Data Scraper
+
+on:
+  schedule:
+    # Runs at 00:00 UTC on the 1st of every month
+    - cron: '0 0 1 * *'
+  workflow_dispatch: # Allows manual trigger from GitHub UI
+
+jobs:
+  scrape-monthly-data:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+        cache: 'pip'
+
+    - name: Install dependencies
+      run: |
+        cd scraper_scripts
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Create serviceAccountKey.json
+      run: |
+        echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > scraper_scripts/serviceAccountKey.json
+
+    - name: Run Monthly Scrapers
+      run: |
+        cd scraper_scripts
+        
+        echo "Running Diagnostic Scraper..."
+        python scrape_diagnostics.py || echo "Warning: Diagnostic scraper failed"
+        
+        echo "Running Doctor Scraper..."
+        python scrape_doctors.py || echo "Warning: Doctor scraper failed"
+        
+        echo "Running Library Scraper..."
+        python scrape_libraries.py || echo "Warning: Library scraper failed"
+        
+        echo "Running SOS Scraper..."
+        python scrape_sos.py || echo "Warning: SOS scraper failed"
+        
+        echo "Running Vromon (Tourism) Scraper..."
+        python scrape_vromon.py || echo "Warning: Vromon scraper failed"
+        
+        echo "Monthly scraping completed."

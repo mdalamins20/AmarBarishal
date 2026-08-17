@@ -59,7 +59,7 @@ class HospitalDetailScreen extends StatelessWidget {
             child: Container(color: Colors.transparent),
           ),
         ),
-        backgroundColor: isDarkMode ? Colors.black.withOpacity(0.4) : Colors.white.withOpacity(0.4),
+        backgroundColor: isDarkMode ? Colors.black.withValues(alpha: 0.4) : Colors.white.withValues(alpha: 0.4),
         elevation: 0,
         title: AutoTranslatedText(
           name, 
@@ -88,15 +88,15 @@ class HospitalDetailScreen extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: isDarkMode ? Colors.teal.shade900.withOpacity(0.3) : Colors.teal.shade50,
+                    color: isDarkMode ? Colors.teal.shade900.withValues(alpha: 0.3) : Colors.teal.shade50,
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: isDarkMode ? Colors.tealAccent.withOpacity(0.5) : Colors.teal,
+                      color: isDarkMode ? Colors.tealAccent.withValues(alpha: 0.5) : Colors.teal,
                       width: 2
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.teal.withOpacity(0.2),
+                        color: Colors.teal.withValues(alpha: 0.2),
                         blurRadius: 20,
                         spreadRadius: 5,
                       )
@@ -202,7 +202,7 @@ class HospitalDetailScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         elevation: 8,
-                        shadowColor: Colors.teal.withOpacity(0.5),
+                        shadowColor: Colors.teal.withValues(alpha: 0.5),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -210,7 +210,7 @@ class HospitalDetailScreen extends StatelessWidget {
                           Container(
                             padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
+                              color: Colors.white.withValues(alpha: 0.2),
                               shape: BoxShape.circle,
                             ),
                             child: const Icon(Icons.call_rounded, size: 28),

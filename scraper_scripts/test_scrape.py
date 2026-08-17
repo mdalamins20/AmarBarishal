@@ -2,12 +2,11 @@ import requests
 from bs4 import BeautifulSoup
 import io
 import pdfplumber
-import urllib3
-urllib3.disable_warnings()
+import re
 
 url = "https://barisal.gov.bd/pages/static-pages/697876a9c4774958d7c4389b"
 print(f"Fetching {url}")
-response = requests.get(url, verify=False)
+response = requests.get(url, verify=True)
 soup = BeautifulSoup(response.content, 'html.parser')
 
 pdf_links = []
@@ -23,7 +22,7 @@ print(f"Found PDF links: {pdf_links}")
 if pdf_links:
     pdf_url = pdf_links[0]
     print(f"Downloading {pdf_url}")
-    res = requests.get(pdf_url, verify=False)
+    res = requests.get(pdf_url, verify=True)
     pdf_file = io.BytesIO(res.content)
     
     with pdfplumber.open(pdf_file) as pdf:

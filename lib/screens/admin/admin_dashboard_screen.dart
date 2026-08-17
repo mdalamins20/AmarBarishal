@@ -1,8 +1,7 @@
-import 'dart:ui';
-import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'package:my_barishal_new/screens/admin/add_edit_category_screen.dart';
 import 'package:my_barishal_new/services/database_translator_service.dart';
+import 'package:my_barishal_new/services/database_seeder.dart';
 
 // Routing Imports for Data Management
 import 'package:my_barishal_new/screens/admin/admin_category_detail_screen.dart';
@@ -46,9 +45,9 @@ class AdminDashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final primaryColor = const Color(0xFF0F4C81);
-    final secondaryColor = const Color(0xFF22A699);
-    final emergencyColor = const Color(0xFFFF4B4B);
+    const primaryColor = Color(0xFF0F4C81);
+    const secondaryColor = Color(0xFF22A699);
+    const emergencyColor = Color(0xFFFF4B4B);
 
     return Scaffold(
       backgroundColor: isDarkMode ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
@@ -68,9 +67,9 @@ class AdminDashboardScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.blueAccent.withOpacity(0.1),
+                color: Colors.blueAccent.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.blueAccent.withOpacity(0.3)),
+                border: Border.all(color: Colors.blueAccent.withValues(alpha: 0.3)),
               ),
               child: Row(
                 children: [
@@ -132,6 +131,50 @@ class AdminDashboardScreen extends StatelessWidget {
                 ),
                 icon: const Icon(Icons.translate),
                 label: const Text('ডাটাবেজ বাংলায় রূপান্তর করুন', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              ),
+            ),
+            const SizedBox(height: 12),
+            // Database Seeder Button
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () async {
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (context) => const Center(child: CircularProgressIndicator()),
+                  );
+                  try {
+                    await DatabaseSeeder.ensureDefaultData();
+                    if (context.mounted) {
+                      Navigator.pop(context); // Close dialog
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('ডাটাবেস ডিফল্ট সিডিং সফল হয়েছে!'),
+                          backgroundColor: Colors.green,
+                        )
+                      );
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      Navigator.pop(context); // Close dialog
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('সিডিং করতে সমস্যা হয়েছে: $e'),
+                          backgroundColor: Colors.red,
+                        )
+                      );
+                    }
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.teal,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                icon: const Icon(Icons.cloud_upload),
+                label: const Text('ডাটাবেস ডিফল্ট সিড করুন', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
               ),
             ),
             const SizedBox(height: 20),
@@ -237,10 +280,10 @@ class AdminDashboardScreen extends StatelessWidget {
           decoration: BoxDecoration(
             color: isDarkMode ? const Color(0xFF1E293B) : Colors.white,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: color.withOpacity(0.3)),
+            border: Border.all(color: color.withValues(alpha: 0.3)),
             boxShadow: [
               BoxShadow(
-                color: color.withOpacity(0.05),
+                color: color.withValues(alpha: 0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               )
@@ -252,7 +295,7 @@ class AdminDashboardScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(icon, color: color, size: 28),

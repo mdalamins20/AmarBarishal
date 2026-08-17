@@ -25,7 +25,7 @@ class AboutMeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accentColor = const Color(0xFF6C63FF);
+    const accentColor = Color(0xFF6C63FF);
 
     return Scaffold(
       backgroundColor: isDark ? const Color(0xFF0F1219) : const Color(0xFFF4F6FA),
@@ -38,7 +38,7 @@ class AboutMeScreen extends StatelessWidget {
            child: Container(
              margin: const EdgeInsets.all(8),
              decoration: BoxDecoration(
-               color: Colors.black.withOpacity(0.3),
+               color: Colors.black.withValues(alpha: 0.3),
                shape: BoxShape.circle,
              ),
              child: const Icon(Icons.arrow_back_rounded, color: Colors.white),
@@ -59,7 +59,7 @@ class AboutMeScreen extends StatelessWidget {
                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                      padding: const EdgeInsets.all(8),
                      decoration: BoxDecoration(
-                       color: Colors.black.withOpacity(0.3),
+                       color: Colors.black.withValues(alpha: 0.3),
                        shape: BoxShape.circle,
                      ),
                      child: const Icon(Icons.edit_rounded, color: Colors.white, size: 20),
@@ -112,7 +112,7 @@ class AboutMeScreen extends StatelessWidget {
                           width: double.infinity,
                           decoration: BoxDecoration(
                              gradient: LinearGradient(
-                               colors: [accentColor.withOpacity(0.5), accentColor],
+                               colors: [accentColor.withValues(alpha: 0.5), accentColor],
                                begin: Alignment.topLeft, end: Alignment.bottomRight,
                              ),
                           ),
@@ -128,7 +128,7 @@ class AboutMeScreen extends StatelessWidget {
                           colors: [
                             isDark ? const Color(0xFF0F1219) : const Color(0xFFF4F6FA),
                             Colors.transparent,
-                            Colors.black.withOpacity(0.6),
+                            Colors.black.withValues(alpha: 0.6),
                           ],
                           begin: Alignment.bottomCenter,
                           end: Alignment.topCenter,
@@ -148,7 +148,7 @@ class AboutMeScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(24),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
+                              color: Colors.black.withValues(alpha: 0.1),
                               blurRadius: 20,
                               offset: const Offset(0, 10),
                             ),
@@ -171,12 +171,12 @@ class AboutMeScreen extends StatelessWidget {
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                                 decoration: BoxDecoration(
-                                  color: accentColor.withOpacity(0.1),
+                                  color: accentColor.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: AutoTranslatedText(
                                   designation.toUpperCase(),
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w700,
                                     letterSpacing: 1.2,
@@ -234,7 +234,7 @@ class AboutMeScreen extends StatelessWidget {
                           color: isDark ? const Color(0xFF1E2533) : Colors.white,
                           borderRadius: BorderRadius.circular(24),
                           boxShadow: [
-                             BoxShadow(color: Colors.black.withOpacity(isDark ? 0.2 : 0.05), blurRadius: 15, offset: const Offset(0, 5)),
+                             BoxShadow(color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05), blurRadius: 15, offset: const Offset(0, 5)),
                           ],
                         ),
                         child: Column(
@@ -262,7 +262,7 @@ class AboutMeScreen extends StatelessWidget {
                           color: isDark ? const Color(0xFF1E2533) : Colors.white,
                           borderRadius: BorderRadius.circular(24),
                           boxShadow: [
-                             BoxShadow(color: Colors.black.withOpacity(isDark ? 0.2 : 0.05), blurRadius: 15, offset: const Offset(0, 5)),
+                             BoxShadow(color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05), blurRadius: 15, offset: const Offset(0, 5)),
                           ],
                         ),
                         child: AutoTranslatedText(
@@ -308,9 +308,9 @@ class AboutMeScreen extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-          color: color.withOpacity(isDark ? 0.2 : 0.1),
+          color: color.withValues(alpha: isDark ? 0.2 : 0.1),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: color.withOpacity(0.3), width: 1.5),
+          border: Border.all(color: color.withValues(alpha: 0.3), width: 1.5),
         ),
         child: Column(
           children: [
@@ -340,7 +340,7 @@ class AboutMeScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: iconColor.withOpacity(0.12),
+                color: iconColor.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: iconColor, size: 22),

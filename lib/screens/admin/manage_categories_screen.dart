@@ -9,7 +9,7 @@ class ManageCategoriesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accentColor = const Color(0xFF6C63FF);
+    const accentColor = Color(0xFF6C63FF);
 
     return Scaffold(
       backgroundColor: isDark ? const Color(0xFF0F1219) : const Color(0xFFF4F6FA),
@@ -47,7 +47,7 @@ class ManageCategoriesScreen extends StatelessWidget {
                       height: 250,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: accentColor.withOpacity(0.12),
+                        color: accentColor.withValues(alpha: 0.12),
                       ),
                     ),
                   ),
@@ -140,7 +140,7 @@ class ManageCategoriesScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.25 : 0.05),
+            color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.05),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -151,7 +151,7 @@ class ManageCategoriesScreen extends StatelessWidget {
         leading: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: iconColor.withOpacity(0.15),
+            color: iconColor.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(16),
           ),
           child: Icon(getIconFromString(category['icon'] ?? 'apps'), color: iconColor, size: 28),

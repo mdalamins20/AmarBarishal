@@ -28,7 +28,7 @@ class AdminDiagnosticListScreen extends StatelessWidget {
             child: Container(color: Colors.transparent),
           ),
         ),
-        backgroundColor: isDarkMode ? Colors.black.withOpacity(0.4) : Colors.white.withOpacity(0.4),
+        backgroundColor: isDarkMode ? Colors.black.withValues(alpha: 0.4) : Colors.white.withValues(alpha: 0.4),
         title: Text('$categoryTitle পরিচালনা', style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
         iconTheme: IconThemeData(color: isDarkMode ? Colors.white : Colors.black),
         elevation: 0,
@@ -86,12 +86,12 @@ class AdminDiagnosticListScreen extends StatelessWidget {
                           child: Card(
                             margin: const EdgeInsets.only(bottom: 12),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                            color: isDarkMode ? Colors.white.withOpacity(0.05) : Colors.white,
+                            color: isDarkMode ? Colors.white.withValues(alpha: 0.05) : Colors.white,
                             elevation: isDarkMode ? 0 : 2,
                             child: ListTile(
                               contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                               leading: CircleAvatar(
-                                backgroundColor: const Color(0xFF0F4C81).withOpacity(0.1),
+                                backgroundColor: const Color(0xFF0F4C81).withValues(alpha: 0.1),
                                 child: const Icon(Icons.local_hospital, color: Color(0xFF0F4C81)),
                               ),
                               title: Text(

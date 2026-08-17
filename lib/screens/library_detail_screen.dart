@@ -56,7 +56,7 @@ class LibraryDetailScreen extends StatelessWidget {
       mapLink = 'https://maps.google.com/maps?q=$encodedQuery&t=&z=15&ie=UTF8&iwloc=&output=embed';
     }
 
-    final Color themeColor = const Color(0xFF6366F1); // Indigo color for Library
+    const Color themeColor = Color(0xFF6366F1); // Indigo color for Library
     final Color bgColor1 = isDarkMode ? const Color(0xFF0F172A) : const Color(0xFFEEF2FF);
     final Color bgColor2 = isDarkMode ? const Color(0xFF1E293B) : const Color(0xFFE0E7FF);
 
@@ -69,7 +69,7 @@ class LibraryDetailScreen extends StatelessWidget {
             child: Container(color: Colors.transparent),
           ),
         ),
-        backgroundColor: isDarkMode ? Colors.black.withOpacity(0.3) : Colors.white.withOpacity(0.4),
+        backgroundColor: isDarkMode ? Colors.black.withValues(alpha: 0.3) : Colors.white.withValues(alpha: 0.4),
         elevation: 0,
         title: AutoTranslatedText(
           name, 
@@ -96,18 +96,18 @@ class LibraryDetailScreen extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(28),
                   decoration: BoxDecoration(
-                    color: isDarkMode ? themeColor.withOpacity(0.2) : Colors.white,
+                    color: isDarkMode ? themeColor.withValues(alpha: 0.2) : Colors.white,
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: themeColor.withOpacity(0.15),
+                        color: themeColor.withValues(alpha: 0.15),
                         blurRadius: 30,
                         spreadRadius: 5,
                         offset: const Offset(0, 10),
                       )
                     ]
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.menu_book_rounded,
                     size: 80,
                     color: themeColor,
@@ -133,7 +133,7 @@ class LibraryDetailScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.location_on_rounded, size: 20, color: themeColor),
+                    const Icon(Icons.location_on_rounded, size: 20, color: themeColor),
                     const SizedBox(width: 6),
                     Expanded(
                       child: AutoTranslatedText(
@@ -172,19 +172,19 @@ class LibraryDetailScreen extends StatelessWidget {
                     margin: const EdgeInsets.only(bottom: 20),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      color: isDarkMode ? Colors.white.withOpacity(0.05) : Colors.white,
+                      color: isDarkMode ? Colors.white.withValues(alpha: 0.05) : Colors.white,
                       border: Border.all(color: isDarkMode ? Colors.white10 : Colors.transparent),
-                      boxShadow: [if(!isDarkMode) BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 15, offset: const Offset(0,5))],
+                      boxShadow: [if(!isDarkMode) BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 15, offset: const Offset(0,5))],
                     ),
                     child: Row(
                       children: [
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: themeColor.withOpacity(0.1),
+                            color: themeColor.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: Icon(Icons.person_outline_rounded, color: themeColor, size: 28),
+                          child: const Icon(Icons.person_outline_rounded, color: themeColor, size: 28),
                         ),
                         const SizedBox(width: 16),
                         Expanded(
@@ -226,7 +226,7 @@ class LibraryDetailScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         elevation: 8,
-                        shadowColor: themeColor.withOpacity(0.4),
+                        shadowColor: themeColor.withValues(alpha: 0.4),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -234,7 +234,7 @@ class LibraryDetailScreen extends StatelessWidget {
                           Container(
                             padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
+                              color: Colors.white.withValues(alpha: 0.2),
                               shape: BoxShape.circle,
                             ),
                             child: const Icon(Icons.call_rounded, size: 28),
@@ -271,16 +271,16 @@ class LibraryDetailScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      color: isDarkMode ? Colors.white.withOpacity(0.05) : Colors.white,
+                      color: isDarkMode ? Colors.white.withValues(alpha: 0.05) : Colors.white,
                       border: Border.all(color: isDarkMode ? Colors.white10 : Colors.transparent),
-                      boxShadow: [if(!isDarkMode) BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 15, offset: const Offset(0,5))],
+                      boxShadow: [if(!isDarkMode) BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 15, offset: const Offset(0,5))],
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
-                            Icon(Icons.map_rounded, color: themeColor),
+                            const Icon(Icons.map_rounded, color: themeColor),
                             const SizedBox(width: 8),
                             AutoTranslatedText(
                               'লোকেশন ম্যাপ',
@@ -316,10 +316,10 @@ class LibraryDetailScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.white.withOpacity(0.05) : Colors.white,
+        color: isDarkMode ? Colors.white.withValues(alpha: 0.05) : Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: isDarkMode ? Colors.white10 : Colors.transparent),
-        boxShadow: [if(!isDarkMode) BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 15, offset: const Offset(0,5))],
+        boxShadow: [if(!isDarkMode) BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 15, offset: const Offset(0,5))],
       ),
       child: Column(
         children: [

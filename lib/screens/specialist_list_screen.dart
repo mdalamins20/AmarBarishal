@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:provider/provider.dart';
-import '../providers/language_provider.dart';
 import '../widgets/auto_translated_text.dart';
 import 'doctor_list_screen.dart';
 
@@ -10,10 +8,10 @@ class SpecialistListScreen extends StatefulWidget {
   final String categoryTitle;
 
   const SpecialistListScreen({
-    Key? key,
+    super.key,
     required this.categoryDocId,
     required this.categoryTitle,
-  }) : super(key: key);
+  });
 
   @override
   State<SpecialistListScreen> createState() => _SpecialistListScreenState();
@@ -47,8 +45,8 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: isDarkMode 
-                  ? [Colors.blueAccent.shade700.withOpacity(0.2), Colors.transparent]
-                  : [Colors.blue.withOpacity(0.1), Colors.transparent],
+                  ? [Colors.blueAccent.shade700.withValues(alpha: 0.2), Colors.transparent]
+                  : [Colors.blue.withValues(alpha: 0.1), Colors.transparent],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
             ),
@@ -93,9 +91,9 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   decoration: BoxDecoration(
-                    color: isDarkMode ? Colors.blue.withOpacity(0.2) : Colors.blue.shade50,
+                    color: isDarkMode ? Colors.blue.withValues(alpha: 0.2) : Colors.blue.shade50,
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.blueAccent.withOpacity(0.3)),
+                    border: Border.all(color: Colors.blueAccent.withValues(alpha: 0.3)),
                   ),
                   child: Center(
                     child: AutoTranslatedText(
@@ -126,7 +124,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                         ),
                         boxShadow: isDarkMode ? [] : [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.02),
+                            color: Colors.black.withValues(alpha: 0.02),
                             blurRadius: 4,
                             offset: const Offset(0, 2),
                           )

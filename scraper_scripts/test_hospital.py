@@ -2,7 +2,7 @@ import requests, base64
 from bs4 import BeautifulSoup
 
 url = 'https://barishal.gov.bd/pages/static-pages/69789b9135ce18e1c066f1c8'
-r = requests.get(url, verify=False)
+r = requests.get(url, verify=True)
 soup = BeautifulSoup(r.content, 'html.parser')
 
 tables = soup.find_all('table')

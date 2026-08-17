@@ -1,7 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import '../widgets/auto_translated_text.dart';
 import 'item_detail_screen.dart';
@@ -172,7 +171,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                   });
                 }
               },
-              selectedColor: isDarkMode ? Colors.blueAccent.withOpacity(0.5) : Colors.blue.shade100,
+              selectedColor: isDarkMode ? Colors.blueAccent.withValues(alpha: 0.5) : Colors.blue.shade100,
               backgroundColor: isDarkMode ? Colors.white10 : Colors.white70,
               labelStyle: TextStyle(
                 color: isSelected 
@@ -210,7 +209,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
           color: isDarkMode ? const Color(0xFF1E1E1E) : Colors.white,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(isDarkMode ? 0.3 : 0.05),
+              color: Colors.black.withValues(alpha: isDarkMode ? 0.3 : 0.05),
               blurRadius: 15,
               offset: const Offset(0, 5),
             )
@@ -240,7 +239,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: Colors.redAccent.withOpacity(0.1),
+                          color: Colors.redAccent.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: AutoTranslatedText(
@@ -306,7 +305,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
           color: isDarkMode ? const Color(0xFF1E1E1E) : Colors.white,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(isDarkMode ? 0.3 : 0.05),
+              color: Colors.black.withValues(alpha: isDarkMode ? 0.3 : 0.05),
               blurRadius: 15,
               offset: const Offset(0, 5),
             )
@@ -402,13 +401,13 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                     borderRadius: BorderRadius.circular(16),
                     gradient: LinearGradient(
                       colors: isDarkMode 
-                        ? [Colors.white.withOpacity(0.05), Colors.white.withOpacity(0.02)]
-                        : [Colors.white.withOpacity(0.8), Colors.white.withOpacity(0.4)],
+                        ? [Colors.white.withValues(alpha: 0.05), Colors.white.withValues(alpha: 0.02)]
+                        : [Colors.white.withValues(alpha: 0.8), Colors.white.withValues(alpha: 0.4)],
                     ),
                     border: Border.all(color: isDarkMode ? Colors.white12 : Colors.white, width: 1.5),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
+                        color: Colors.black.withValues(alpha: 0.05),
                         blurRadius: 10,
                         spreadRadius: 1,
                       )
@@ -550,7 +549,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
             child: Container(color: Colors.transparent),
           ),
         ),
-        backgroundColor: isDarkMode ? Colors.black.withOpacity(0.4) : Colors.white.withOpacity(0.4),
+        backgroundColor: isDarkMode ? Colors.black.withValues(alpha: 0.4) : Colors.white.withValues(alpha: 0.4),
         elevation: 0,
         title: AutoTranslatedText(widget.categoryTitle, style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
         iconTheme: IconThemeData(color: isDarkMode ? Colors.white : Colors.black),
@@ -576,7 +575,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                   width: double.infinity,
                   height: 55,
                   decoration: BoxDecoration(
-                    color: isDarkMode ? Colors.white.withOpacity(0.1) : Colors.white.withOpacity(0.5),
+                    color: isDarkMode ? Colors.white.withValues(alpha: 0.1) : Colors.white.withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(color: isDarkMode ? Colors.white24 : Colors.white),
                   ),
@@ -621,7 +620,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                   ),
                 ) : Container(
                   decoration: BoxDecoration(
-                    color: isDarkMode ? Colors.white.withOpacity(0.1) : Colors.white.withOpacity(0.5),
+                    color: isDarkMode ? Colors.white.withValues(alpha: 0.1) : Colors.white.withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(color: isDarkMode ? Colors.white24 : Colors.white),
                   ),
@@ -739,8 +738,8 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: isDarkMode 
-                ? [Colors.blueAccent.withOpacity(0.15), Colors.purpleAccent.withOpacity(0.15)]
-                : [Colors.blue.shade50.withOpacity(0.9), Colors.purple.shade50.withOpacity(0.9)],
+                ? [Colors.blueAccent.withValues(alpha: 0.15), Colors.purpleAccent.withValues(alpha: 0.15)]
+                : [Colors.blue.shade50.withValues(alpha: 0.9), Colors.purple.shade50.withValues(alpha: 0.9)],
           ),
           border: Border.all(
             color: isDarkMode ? Colors.white12 : Colors.white,
@@ -748,7 +747,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
           ),
           boxShadow: [
             BoxShadow(
-              color: isDarkMode ? Colors.black26 : Colors.blue.withOpacity(0.1),
+              color: isDarkMode ? Colors.black26 : Colors.blue.withValues(alpha: 0.1),
               blurRadius: 20,
               spreadRadius: 2,
               offset: const Offset(0, 8),
@@ -769,7 +768,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
+                        color: Colors.black.withValues(alpha: 0.05),
                         blurRadius: 10,
                         spreadRadius: 1,
                       )

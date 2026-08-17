@@ -26,8 +26,8 @@ class AllServicesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final primaryColor = const Color(0xFF0F4C81);
-    final secondaryColor = const Color(0xFF22A699);
+    const primaryColor = Color(0xFF0F4C81);
+    const secondaryColor = Color(0xFF22A699);
 
     return Scaffold(
       backgroundColor: isDarkMode ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
@@ -128,10 +128,10 @@ class AllServicesScreen extends StatelessWidget {
           decoration: BoxDecoration(
             color: isDarkMode ? const Color(0xFF1E293B) : Colors.white,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: color.withOpacity(0.3)),
+            border: Border.all(color: color.withValues(alpha: 0.3)),
             boxShadow: [
               BoxShadow(
-                color: color.withOpacity(0.05),
+                color: color.withValues(alpha: 0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               )
@@ -143,7 +143,7 @@ class AllServicesScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(icon, color: color, size: 28),

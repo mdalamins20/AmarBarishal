@@ -34,7 +34,7 @@ class PoliceThanaListScreen extends StatelessWidget {
             child: Container(color: Colors.transparent),
           ),
         ),
-        backgroundColor: isDarkMode ? Colors.black.withOpacity(0.4) : Colors.white.withOpacity(0.4),
+        backgroundColor: isDarkMode ? Colors.black.withValues(alpha: 0.4) : Colors.white.withValues(alpha: 0.4),
         elevation: 0,
         title: AutoTranslatedText('$name - পুলিশ ও থানা', style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
         iconTheme: IconThemeData(color: isDarkMode ? Colors.white : Colors.black),
@@ -78,13 +78,13 @@ class PoliceThanaListScreen extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(16),
                                 gradient: LinearGradient(
                                   colors: isDarkMode 
-                                    ? [Colors.white.withOpacity(0.05), Colors.white.withOpacity(0.02)]
-                                    : [Colors.white.withOpacity(0.8), Colors.white.withOpacity(0.4)],
+                                    ? [Colors.white.withValues(alpha: 0.05), Colors.white.withValues(alpha: 0.02)]
+                                    : [Colors.white.withValues(alpha: 0.8), Colors.white.withValues(alpha: 0.4)],
                                 ),
                                 border: Border.all(color: isDarkMode ? Colors.white12 : Colors.white, width: 1.5),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.05),
+                                    color: Colors.black.withValues(alpha: 0.05),
                                     blurRadius: 10,
                                     spreadRadius: 1,
                                   )
@@ -104,7 +104,7 @@ class PoliceThanaListScreen extends StatelessWidget {
                                             Container(
                                               padding: const EdgeInsets.all(10),
                                               decoration: BoxDecoration(
-                                                color: Colors.blue.withOpacity(0.15),
+                                                color: Colors.blue.withValues(alpha: 0.15),
                                                 shape: BoxShape.circle,
                                               ),
                                               child: const Icon(Icons.local_police_rounded, color: Colors.blue, size: 28),

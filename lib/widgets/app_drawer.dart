@@ -46,14 +46,14 @@ class AppDrawer extends StatelessWidget {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
-                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.15), blurRadius: 10, offset: const Offset(0, 5))],
+                  boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.15), blurRadius: 10, offset: const Offset(0, 5))],
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
                       padding: const EdgeInsets.all(3),
-                      decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle, boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 8, spreadRadius: 1)]),
+                      decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle, boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 8, spreadRadius: 1)]),
                       child: CircleAvatar(
                         radius: 32,
                         backgroundColor: Colors.grey.shade200,
@@ -69,7 +69,7 @@ class AppDrawer extends StatelessWidget {
                     const SizedBox(height: 6),
                     Text(
                       user != null ? (user.email ?? lang.t('welcome')) : lang.t('drawer_subtitle'),
-                      style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 13, fontWeight: FontWeight.w500),
+                      style: TextStyle(color: Colors.white.withValues(alpha: 0.9), fontSize: 13, fontWeight: FontWeight.w500),
                     ),
                   ],
                 ),
@@ -216,7 +216,7 @@ class AppDrawer extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
           splashColor: isDarkMode ? Colors.white12 : Colors.black12,
-          highlightColor: isDarkMode ? Colors.white10 : Colors.black.withOpacity(0.05),
+          highlightColor: isDarkMode ? Colors.white10 : Colors.black.withValues(alpha: 0.05),
           onTap: onTap,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),

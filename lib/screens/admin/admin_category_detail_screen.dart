@@ -95,7 +95,7 @@ class _AdminCategoryDetailScreenState extends State<AdminCategoryDetailScreen> {
             child: Container(color: Colors.transparent),
           ),
         ),
-        backgroundColor: isDarkMode ? Colors.black.withOpacity(0.4) : Colors.white.withOpacity(0.4),
+        backgroundColor: isDarkMode ? Colors.black.withValues(alpha: 0.4) : Colors.white.withValues(alpha: 0.4),
         elevation: 0,
         title: Text('${widget.categoryTitle} - পরিচালনা', style: const TextStyle(fontWeight: FontWeight.bold)),
       ),
@@ -116,7 +116,7 @@ class _AdminCategoryDetailScreenState extends State<AdminCategoryDetailScreen> {
                 padding: const EdgeInsets.all(16.0),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: isDarkMode ? Colors.white.withOpacity(0.1) : Colors.white.withOpacity(0.5),
+                    color: isDarkMode ? Colors.white.withValues(alpha: 0.1) : Colors.white.withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(color: isDarkMode ? Colors.white24 : Colors.white),
                   ),
@@ -172,8 +172,8 @@ class _AdminCategoryDetailScreenState extends State<AdminCategoryDetailScreen> {
                                     borderRadius: BorderRadius.circular(16),
                                     gradient: LinearGradient(
                                       colors: isDarkMode 
-                                        ? [Colors.white.withOpacity(0.05), Colors.white.withOpacity(0.02)]
-                                        : [Colors.white.withOpacity(0.8), Colors.white.withOpacity(0.4)],
+                                        ? [Colors.white.withValues(alpha: 0.05), Colors.white.withValues(alpha: 0.02)]
+                                        : [Colors.white.withValues(alpha: 0.8), Colors.white.withValues(alpha: 0.4)],
                                     ),
                                     border: Border.all(color: isDarkMode ? Colors.white12 : Colors.white, width: 1.5),
                                   ),

@@ -6,9 +6,6 @@ from firebase_admin import credentials, firestore
 from bs4 import BeautifulSoup
 import pdfplumber
 
-import urllib3
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
 def initialize_firebase():
     cred_path = "serviceAccountKey.json"
     
@@ -31,7 +28,7 @@ def initialize_firebase():
 def get_pdf_links(url):
     print(f"\nওয়েবসাইট স্ক্যান করা হচ্ছে: {url}")
     try:
-        response = requests.get(url, verify=False) 
+        response = requests.get(url, verify=True) 
         soup = BeautifulSoup(response.content, 'html.parser')
         
         pdf_links = []
@@ -51,7 +48,7 @@ def get_pdf_links(url):
 def extract_data_from_pdf(pdf_url):
     print(f"পিডিএফ প্রসেস হচ্ছে: {pdf_url}")
     try:
-        response = requests.get(pdf_url, verify=False)
+        response = requests.get(pdf_url, verify=True)
         pdf_file = io.BytesIO(response.content)
         
         extracted_data = []

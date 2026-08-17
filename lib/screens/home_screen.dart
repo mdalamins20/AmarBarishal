@@ -1,10 +1,6 @@
-import 'dart:ui';
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:my_barishal_new/screens/category_detail_screen.dart';
-import 'package:my_barishal_new/screens/news_links_screen.dart';
-import 'package:my_barishal_new/screens/notification_screen.dart';
 import 'package:my_barishal_new/screens/upazila_list_screen.dart';
 import 'package:my_barishal_new/screens/news_source_screen.dart';
 import 'package:my_barishal_new/screens/sos_list_screen.dart';
@@ -15,13 +11,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:geolocator/geolocator.dart';
+import 'package:xml/xml.dart';
 import 'diagnostic_screen.dart';
 import 'all_services_screen.dart';
 import 'ticket_providers_screen.dart';
+import 'package:provider/provider.dart';
+import '../providers/theme_provider.dart';
+import 'settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  final VoidCallback onThemeChanged;
-  const HomeScreen({super.key, required this.onThemeChanged});
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -96,26 +95,29 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     // Load hospital
-    final hospitalCount = await getCount('hospital');
-    if (mounted) setState(() => _hospitalCount = '${_toBengaliNumber(hospitalCount)}+');
+    getCount('hospital').then((count) {
+      if (mounted) setState(() => _hospitalCount = '${_toBengaliNumber(count)}+');
+    });
 
-    // Load school
-    int totalSchool = 0;
-    for (String cat in ['primarySchool', 'highSchool', 'college', 'university', 'madrasa', 'schoolCollege', 'medical_college', 'engineering_college', 'polytechnic', 'higher_secondary', 'english_medium', 'technical_school', 'drama_school', 'art_school', 'training_institute', 'research_institution', 'special_school']) {
-      totalSchool += await getCount(cat);
-    }
-    if (mounted) setState(() => _schoolCount = '${_toBengaliNumber(totalSchool)}+');
+    // Load school (Concurrent Execution)
+    final schoolCategories = ['primarySchool', 'highSchool', 'college', 'university', 'madrasa', 'schoolCollege', 'medical_college', 'engineering_college', 'polytechnic', 'higher_secondary', 'english_medium', 'technical_school', 'drama_school', 'art_school', 'training_institute', 'research_institution', 'special_school'];
+    
+    Future.wait(schoolCategories.map((cat) => getCount(cat))).then((results) {
+      int totalSchool = results.fold(0, (sum, count) => sum + count);
+      if (mounted) setState(() => _schoolCount = '${_toBengaliNumber(totalSchool)}+');
+    });
 
     // Load hotel
-    final hotelCount = await getCount('hotel');
-    if (mounted) setState(() => _hotelCount = '${_toBengaliNumber(hotelCount)}+');
+    getCount('hotel').then((count) {
+      if (mounted) setState(() => _hotelCount = '${_toBengaliNumber(count)}+');
+    });
 
-    // Load emergency
-    int totalEmergency = 0;
-    for (String cat in ['police', 'fire_service', 'fireService', 'ambulance']) {
-      totalEmergency += await getCount(cat);
-    }
-    if (mounted) setState(() => _emergencyCount = '${_toBengaliNumber(totalEmergency)}+');
+    // Load emergency (Concurrent Execution)
+    final emergencyCategories = ['police', 'fire_service', 'fireService', 'ambulance'];
+    Future.wait(emergencyCategories.map((cat) => getCount(cat))).then((results) {
+      int totalEmergency = results.fold(0, (sum, count) => sum + count);
+      if (mounted) setState(() => _emergencyCount = '${_toBengaliNumber(totalEmergency)}+');
+    });
   }
 
   Future<void> _fetchNews() async {
@@ -123,14 +125,13 @@ class _HomeScreenState extends State<HomeScreen> {
       final cacheBuster = DateTime.now().millisecondsSinceEpoch;
       final response = await http.get(Uri.parse('https://news.google.com/rss/search?q=%E0%A6%AC%E0%A6%B0%E0%A6%BF%E0%A6%B6%E0%A6%BE%E0%A6%B2&hl=bn&gl=BD&ceid=BD:bn&_cb=$cacheBuster'));
       if (response.statusCode == 200) {
-        // Simple regex to extract titles from RSS
-        final matches = RegExp(r'<item>.*?<title>(.*?)</title>', dotAll: true).allMatches(response.body);
-        final news = matches.map((m) {
-          String text = m.group(1) ?? '';
-          text = text.replaceAll('<![CDATA[', '').replaceAll(']]>', '')
-                     .replaceAll('&quot;', '"').replaceAll('&amp;', '&')
-                     .replaceAll('&lt;', '<').replaceAll('&gt;', '>');
-          return text.trim();
+        // Proper XML Parsing using xml package
+        final document = XmlDocument.parse(response.body);
+        final items = document.findAllElements('item');
+        
+        final news = items.map((node) {
+          final titleElement = node.findElements('title').firstOrNull;
+          return titleElement?.innerText.trim() ?? '';
         }).where((text) => text.isNotEmpty).toList();
         
         news.shuffle();
@@ -160,7 +161,35 @@ class _HomeScreenState extends State<HomeScreen> {
       if (serviceEnabled) {
         LocationPermission permission = await Geolocator.checkPermission();
         if (permission == LocationPermission.denied) {
-          permission = await Geolocator.requestPermission();
+          if (!mounted) return;
+          // Show dialog before requesting permission (UX improvement)
+          bool? userConsent = await showDialog<bool>(
+            context: context,
+            builder: (context) => AlertDialog(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              title: const Text('লোকেশন পারমিশন প্রয়োজন', style: TextStyle(fontWeight: FontWeight.bold)),
+              content: const Text('আপনার আশেপাশের সঠিক আবহাওয়ার তথ্য এবং জরুরি সুবিধাগুলো দেখাতে আমাদের আপনার বর্তমান লোকেশনটি জানা প্রয়োজন। আপনি কি অনুমতি দিচ্ছেন?'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: const Text('না', style: TextStyle(color: Colors.grey)),
+                ),
+                ElevatedButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueAccent,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child: const Text('হ্যাঁ, অনুমতি দিচ্ছি'),
+                ),
+              ],
+            ),
+          );
+
+          if (userConsent == true) {
+            permission = await Geolocator.requestPermission();
+          }
         }
         
         if (permission == LocationPermission.whileInUse || permission == LocationPermission.always) {
@@ -261,9 +290,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final primaryColor = const Color(0xFF0F4C81);
-    final secondaryColor = const Color(0xFF22A699);
-    final accentColor = const Color(0xFFFF6B35);
+    const primaryColor = Color(0xFF0F4C81);
+    const secondaryColor = Color(0xFF22A699);
+    const accentColor = Color(0xFFFF6B35);
     final bgColor = isDarkMode ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC);
 
     return Scaffold(
@@ -322,7 +351,7 @@ class _HomeScreenState extends State<HomeScreen> {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: primaryColor.withOpacity(0.3),
+            color: primaryColor.withValues(alpha: 0.3),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -358,8 +387,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     begin: Alignment.centerLeft,
                     end: Alignment.centerRight,
                     colors: [
-                      (isDarkMode ? const Color(0xFF1E293B) : primaryColor).withOpacity(0.95),
-                      (isDarkMode ? const Color(0xFF1E293B) : primaryColor).withOpacity(0.6),
+                      (isDarkMode ? const Color(0xFF1E293B) : primaryColor).withValues(alpha: 0.95),
+                      (isDarkMode ? const Color(0xFF1E293B) : primaryColor).withValues(alpha: 0.6),
                       Colors.transparent,
                     ],
                     stops: const [0.0, 0.45, 1.0],
@@ -380,9 +409,9 @@ class _HomeScreenState extends State<HomeScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
+                  color: Colors.white.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.white.withOpacity(0.2)),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -404,22 +433,47 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     Text(
                       _weatherDescription,
-                      style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 11),
+                      style: TextStyle(color: Colors.white.withValues(alpha: 0.9), fontSize: 11),
                     ),
                   ],
                 ),
               ),
-              // Theme Toggle
-              IconButton(
-                icon: Icon(isDarkMode ? Icons.light_mode : Icons.dark_mode, color: Colors.white),
-                onPressed: widget.onThemeChanged,
+              Row(
+                children: [
+                  // Theme Toggle using ThemeProvider
+                  Consumer<ThemeProvider>(
+                    builder: (context, themeProvider, child) {
+                      final isDarkMode = themeProvider.themeMode == ThemeMode.dark ||
+                          (themeProvider.themeMode == ThemeMode.system &&
+                              MediaQuery.of(context).platformBrightness == Brightness.dark);
+                      return IconButton(
+                        icon: Icon(isDarkMode ? Icons.light_mode : Icons.dark_mode, color: Colors.white),
+                        onPressed: () {
+                          themeProvider.toggleTheme(isDarkMode);
+                        },
+                      );
+                    },
+                  ),
+                  // Settings Icon
+                  IconButton(
+                    icon: const Icon(Icons.settings, color: Colors.white),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SettingsScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
             ],
           ),
           const SizedBox(height: 16),
-          AutoTranslatedText(
+          const AutoTranslatedText(
             'আমার বরিশাল',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 32,
               fontWeight: FontWeight.bold,
               color: Colors.white,
@@ -430,7 +484,7 @@ class _HomeScreenState extends State<HomeScreen> {
             'বরিশালের সকল তথ্য এক জায়গায়',
             style: TextStyle(
               fontSize: 16,
-              color: Colors.white.withOpacity(0.8),
+              color: Colors.white.withValues(alpha: 0.8),
             ),
           ),
         ],
@@ -452,7 +506,7 @@ class _HomeScreenState extends State<HomeScreen> {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, 4),
             )
@@ -511,7 +565,7 @@ class _HomeScreenState extends State<HomeScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 4),
           )
@@ -617,10 +671,10 @@ class _HomeScreenState extends State<HomeScreen> {
               decoration: BoxDecoration(
                 color: isDarkMode ? const Color(0xFF1E293B) : Colors.white,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: color.withOpacity(0.3)),
+                border: Border.all(color: color.withValues(alpha: 0.3)),
                 boxShadow: [
                   BoxShadow(
-                    color: color.withOpacity(0.1),
+                    color: color.withValues(alpha: 0.1),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   )
@@ -658,7 +712,7 @@ class _HomeScreenState extends State<HomeScreen> {
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.08),
+              color: color.withValues(alpha: 0.08),
               blurRadius: 10,
               offset: const Offset(0, 4),
             )
@@ -671,7 +725,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.15),
+                color: color.withValues(alpha: 0.15),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: color, size: 26),
@@ -718,7 +772,7 @@ class _HomeScreenState extends State<HomeScreen> {
               color: isDarkMode ? const Color(0xFF1E293B) : Colors.white,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
-                BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4))
+                BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, 4))
               ]
             ),
             child: ListView.separated(
@@ -730,7 +784,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 return ListTile(
                   leading: Container(
                     padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(color: primaryColor.withOpacity(0.1), shape: BoxShape.circle),
+                    decoration: BoxDecoration(color: primaryColor.withValues(alpha: 0.1), shape: BoxShape.circle),
                     child: Icon(Icons.newspaper, color: primaryColor, size: 20),
                   ),
                   title: AutoTranslatedText(

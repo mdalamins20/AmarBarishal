@@ -60,11 +60,11 @@ class _AddEditCategoryScreenState extends State<AddEditCategoryScreen> with Sing
       if(mounted) {
          ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Row(
+              content: const Row(
                 children: [
-                  const Icon(Icons.check_circle_rounded, color: Colors.white),
-                  const SizedBox(width: 12),
-                  const Text('সফলভাবে সংরক্ষিত হয়েছে!'),
+                  Icon(Icons.check_circle_rounded, color: Colors.white),
+                  SizedBox(width: 12),
+                  Text('সফলভাবে সংরক্ষিত হয়েছে!'),
                 ],
               ),
               backgroundColor: Colors.green.shade600,
@@ -99,7 +99,7 @@ class _AddEditCategoryScreenState extends State<AddEditCategoryScreen> with Sing
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accentColor = const Color(0xFF6C63FF);
+    const accentColor = Color(0xFF6C63FF);
 
     return Scaffold(
       backgroundColor: isDark ? const Color(0xFF0F1219) : const Color(0xFFF4F6FA),
@@ -137,7 +137,7 @@ class _AddEditCategoryScreenState extends State<AddEditCategoryScreen> with Sing
                       height: 250,
                       decoration: BoxDecoration(
                          shape: BoxShape.circle,
-                         color: accentColor.withOpacity(0.12),
+                         color: accentColor.withValues(alpha: 0.12),
                       ),
                     ),
                   ),
@@ -149,12 +149,12 @@ class _AddEditCategoryScreenState extends State<AddEditCategoryScreen> with Sing
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
                           decoration: BoxDecoration(
-                            color: accentColor.withOpacity(0.15),
+                            color: accentColor.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(30),
                           ),
                           child: Text(
                              widget.documentId == null ? 'নতুন ক্যাটাগরি' : 'সম্পাদনা',
-                             style: TextStyle(
+                             style: const TextStyle(
                                fontSize: 12,
                                fontWeight: FontWeight.w600,
                                color: accentColor,
@@ -197,7 +197,7 @@ class _AddEditCategoryScreenState extends State<AddEditCategoryScreen> with Sing
                             color: isDark ? const Color(0xFF1E2533) : Colors.white,
                             borderRadius: BorderRadius.circular(20),
                             boxShadow: [
-                              BoxShadow(color: Colors.black.withOpacity(isDark ? 0.25 : 0.05), blurRadius: 20, offset: const Offset(0, 6)),
+                              BoxShadow(color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.05), blurRadius: 20, offset: const Offset(0, 6)),
                             ],
                           ),
                           child: Column(
@@ -256,14 +256,14 @@ class _AddEditCategoryScreenState extends State<AddEditCategoryScreen> with Sing
                           width: double.infinity,
                           height: 58,
                           child: _isLoading 
-                             ? Center(child: CircularProgressIndicator(color: accentColor))
+                             ? const Center(child: CircularProgressIndicator(color: accentColor))
                              : ElevatedButton(
                                  onPressed: _saveForm,
                                  style: ElevatedButton.styleFrom(
                                    backgroundColor: accentColor,
                                    foregroundColor: Colors.white,
                                    elevation: 8,
-                                   shadowColor: accentColor.withOpacity(0.4),
+                                   shadowColor: accentColor.withValues(alpha: 0.4),
                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
                                  ),
                                  child: Row(

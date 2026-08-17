@@ -51,7 +51,7 @@ class NewsLinksScreen extends StatelessWidget {
             child: Container(color: Colors.transparent),
           ),
         ),
-        backgroundColor: isDarkMode ? Colors.black.withOpacity(0.4) : Colors.white.withOpacity(0.4),
+        backgroundColor: isDarkMode ? Colors.black.withValues(alpha: 0.4) : Colors.white.withValues(alpha: 0.4),
         elevation: 0,
         title: AutoTranslatedText('বরিশালের খবর', style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
         iconTheme: IconThemeData(color: isDarkMode ? Colors.white : Colors.black),
@@ -99,7 +99,7 @@ class NewsLinksScreen extends StatelessWidget {
                         final title = data['title'] ?? 'সংবাদপত্র';
                         final url = data['url'] ?? '';
                         
-                        final Color baseColor = const Color(0xFF512DA8);
+                        const Color baseColor = Color(0xFF512DA8);
                         final Color iconColor = isDarkMode ? Colors.purpleAccent : Color.lerp(baseColor, Colors.black, 0.45)!;
 
                         return AnimationConfiguration.staggeredGrid(
@@ -122,17 +122,17 @@ class NewsLinksScreen extends StatelessWidget {
                                       begin: Alignment.topLeft,
                                       end: Alignment.bottomRight,
                                       colors: [
-                                        baseColor.withOpacity(isDarkMode ? 0.3 : 0.15),
-                                        baseColor.withOpacity(isDarkMode ? 0.1 : 0.05),
+                                        baseColor.withValues(alpha: isDarkMode ? 0.3 : 0.15),
+                                        baseColor.withValues(alpha: isDarkMode ? 0.1 : 0.05),
                                       ],
                                     ),
                                     border: Border.all(
-                                      color: baseColor.withOpacity(isDarkMode ? 0.6 : 0.4),
+                                      color: baseColor.withValues(alpha: isDarkMode ? 0.6 : 0.4),
                                       width: 1.5,
                                     ),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: baseColor.withOpacity(0.15),
+                                        color: baseColor.withValues(alpha: 0.15),
                                         blurRadius: 15,
                                         spreadRadius: 1,
                                       )
@@ -148,7 +148,7 @@ class NewsLinksScreen extends StatelessWidget {
                                           Container(
                                             padding: const EdgeInsets.all(12),
                                             decoration: BoxDecoration(
-                                              color: baseColor.withOpacity(isDarkMode ? 0.2 : 0.15),
+                                              color: baseColor.withValues(alpha: isDarkMode ? 0.2 : 0.15),
                                               shape: BoxShape.circle,
                                             ),
                                             child: Icon(
@@ -166,7 +166,7 @@ class NewsLinksScreen extends StatelessWidget {
                                               style: TextStyle(
                                                 fontWeight: FontWeight.w600,
                                                 fontSize: 14,
-                                                color: isDarkMode ? Colors.white.withOpacity(0.9) : Colors.black87,
+                                                color: isDarkMode ? Colors.white.withValues(alpha: 0.9) : Colors.black87,
                                               ),
                                               maxLines: 2,
                                               overflow: TextOverflow.ellipsis,

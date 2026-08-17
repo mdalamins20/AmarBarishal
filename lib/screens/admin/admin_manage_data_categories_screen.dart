@@ -26,7 +26,7 @@ class AdminManageDataCategoriesScreen extends StatelessWidget {
             child: Container(color: Colors.transparent),
           ),
         ),
-        backgroundColor: isDarkMode ? Colors.black.withOpacity(0.4) : Colors.white.withOpacity(0.4),
+        backgroundColor: isDarkMode ? Colors.black.withValues(alpha: 0.4) : Colors.white.withValues(alpha: 0.4),
         title: Text('ক্যাটাগরি ডেটা নির্বাচন করুন', style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
         iconTheme: IconThemeData(color: isDarkMode ? Colors.white : Colors.black),
         elevation: 0,
@@ -71,14 +71,14 @@ class AdminManageDataCategoriesScreen extends StatelessWidget {
                           child: Card(
                             margin: const EdgeInsets.only(bottom: 12),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                            color: isDarkMode ? Colors.white.withOpacity(0.05) : Colors.white.withOpacity(0.8),
+                            color: isDarkMode ? Colors.white.withValues(alpha: 0.05) : Colors.white.withValues(alpha: 0.8),
                             elevation: 0,
                             child: ListTile(
                               contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                               leading: Container(
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                  color: iconColor.withOpacity(0.2),
+                                  color: iconColor.withValues(alpha: 0.2),
                                   shape: BoxShape.circle,
                                 ),
                                 child: Icon(getIconFromString(category['icon']), color: iconColor),

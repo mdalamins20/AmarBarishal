@@ -4,14 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'firebase_options.dart';
 import 'screens/splash_screen.dart';
 import 'services/notification_service.dart';
 import 'package:provider/provider.dart';
 import 'providers/language_provider.dart';
-import 'services/database_seeder.dart';
+import 'providers/theme_provider.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -58,6 +57,7 @@ Future<void> main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => LanguageProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ],
       child: const MyBarishalApp(),
     ),
@@ -107,76 +107,20 @@ final _darkTheme = ThemeData(
 );
 
 
-class MyBarishalApp extends StatefulWidget {
+class MyBarishalApp extends StatelessWidget {
   const MyBarishalApp({super.key});
-  @override
-  State<MyBarishalApp> createState() => _MyBarishalAppState();
-}
-
-class _MyBarishalAppState extends State<MyBarishalApp> {
-  // অ্যাপের থিম স্টেট ম্যানেজ করার জন্য ভেরিয়েবল
-  ThemeMode _themeMode = ThemeMode.system; // সিস্টেম ডিফল্ট দিয়ে শুরু হবে
-  bool _isLoadingTheme = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadTheme();
-  }
-
-  // SharedPreferences থেকে সেভ করা থিম লোড করা
-  void _loadTheme() async {
-    final prefs = await SharedPreferences.getInstance();
-    // উইজেট dispose হয়ে গেলে যেন setState কল না হয়, তার জন্য mounted চেক
-    if (mounted) {
-      final isDarkMode = prefs.getBool('isDarkMode');
-      setState(() {
-        if (isDarkMode == null) {
-          _themeMode = ThemeMode.system; // কোনো সেটিং না থাকলে সিস্টেম থিম
-        } else {
-          _themeMode = isDarkMode ? ThemeMode.dark : ThemeMode.light;
-        }
-        _isLoadingTheme = false;
-      });
-    }
-  }
-
-  // থিম পরিবর্তন করার ফাংশন
-  void _toggleTheme() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (mounted) {
-      setState(() {
-        final isCurrentlyDark = _themeMode == ThemeMode.dark ||
-            (_themeMode == ThemeMode.system &&
-                MediaQuery.of(context).platformBrightness == Brightness.dark);
-
-        _themeMode = isCurrentlyDark ? ThemeMode.light : ThemeMode.dark;
-        prefs.setBool('isDarkMode', !isCurrentlyDark);
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
-    // থিম লোড হওয়ার আগ পর্যন্ত লোডিং স্ক্রিন দেখানো
-    if (_isLoadingTheme) {
-      return const MaterialApp(
-        home: Scaffold(
-          body: Center(
-            child: CircularProgressIndicator(),
-          ),
-        ),
-      );
-    }
+    final themeProvider = Provider.of<ThemeProvider>(context);
 
     return MaterialApp(
       title: 'আমার বরিশাল',
       navigatorKey: navigatorKey,
       theme: _lightTheme,
       darkTheme: _darkTheme,
-      themeMode: _themeMode,
-      // SplashScreen-এ onThemeChanged ফাংশনটি পাস করা হয়েছে
-      home: SplashScreen(onThemeChanged: _toggleTheme),
+      themeMode: themeProvider.themeMode,
+      home: const SplashScreen(),
       debugShowCheckedModeBanner: false,
     );
   }

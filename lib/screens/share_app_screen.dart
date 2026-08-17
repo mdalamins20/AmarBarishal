@@ -18,7 +18,7 @@ class ShareAppScreen extends StatelessWidget {
             child: Container(color: Colors.transparent),
           ),
         ),
-        backgroundColor: isDarkMode ? Colors.black.withOpacity(0.4) : Colors.white.withOpacity(0.4),
+        backgroundColor: isDarkMode ? Colors.black.withValues(alpha: 0.4) : Colors.white.withValues(alpha: 0.4),
         title: Text('বন্ধুদের সাথে শেয়ার করুন', style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
         iconTheme: IconThemeData(color: isDarkMode ? Colors.white : Colors.black),
         elevation: 0,
@@ -46,15 +46,15 @@ class ShareAppScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(30),
                   gradient: LinearGradient(
                     colors: isDarkMode 
-                      ? [Colors.white.withOpacity(0.1), Colors.white.withOpacity(0.05)]
-                      : [Colors.white.withOpacity(0.8), Colors.white.withOpacity(0.5)],
+                      ? [Colors.white.withValues(alpha: 0.1), Colors.white.withValues(alpha: 0.05)]
+                      : [Colors.white.withValues(alpha: 0.8), Colors.white.withValues(alpha: 0.5)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
                   border: Border.all(color: isDarkMode ? Colors.white24 : Colors.white, width: 2),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Colors.black.withValues(alpha: 0.1),
                       blurRadius: 20,
                       spreadRadius: 5,
                     )
@@ -69,7 +69,7 @@ class ShareAppScreen extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: Colors.green.withOpacity(0.15),
+                            color: Colors.green.withValues(alpha: 0.15),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(Icons.share_rounded, size: 60, color: Colors.green.shade500),
@@ -100,7 +100,7 @@ class ShareAppScreen extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                           decoration: BoxDecoration(
-                            color: isDarkMode ? Colors.black26 : Colors.black.withOpacity(0.05),
+                            color: isDarkMode ? Colors.black26 : Colors.black.withValues(alpha: 0.05),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: const Row(

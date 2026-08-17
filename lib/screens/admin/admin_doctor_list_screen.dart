@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:my_barishal_new/services/fcm_sender_service.dart';
 import 'add_edit_doctor_screen.dart';
-import 'admin_doctor_list_screen.dart';
 
 class AdminSpecialistListScreen extends StatefulWidget {
   final String categoryTitle;
@@ -65,7 +64,7 @@ class _AdminSpecialistListScreenState extends State<AdminSpecialistListScreen> {
             child: Container(color: Colors.transparent),
           ),
         ),
-        backgroundColor: isDarkMode ? Colors.black.withOpacity(0.4) : Colors.white.withOpacity(0.4),
+        backgroundColor: isDarkMode ? Colors.black.withValues(alpha: 0.4) : Colors.white.withValues(alpha: 0.4),
         title: Text('${widget.categoryTitle} - স্পেশালিটি', style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
         iconTheme: IconThemeData(color: isDarkMode ? Colors.white : Colors.black),
         elevation: 0,
@@ -122,12 +121,12 @@ class _AdminSpecialistListScreenState extends State<AdminSpecialistListScreen> {
                           child: Card(
                             margin: const EdgeInsets.only(bottom: 12),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                            color: isDarkMode ? Colors.white.withOpacity(0.05) : Colors.white,
+                            color: isDarkMode ? Colors.white.withValues(alpha: 0.05) : Colors.white,
                             elevation: isDarkMode ? 0 : 2,
                             child: ListTile(
                               contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                               leading: CircleAvatar(
-                                backgroundColor: Colors.blueAccent.withOpacity(0.1),
+                                backgroundColor: Colors.blueAccent.withValues(alpha: 0.1),
                                 child: const Icon(Icons.medical_services, color: Colors.blueAccent),
                               ),
                               title: Text(
@@ -182,7 +181,7 @@ class AdminDoctorListScreen extends StatelessWidget {
             child: Container(color: Colors.transparent),
           ),
         ),
-        backgroundColor: isDarkMode ? Colors.black.withOpacity(0.4) : Colors.white.withOpacity(0.4),
+        backgroundColor: isDarkMode ? Colors.black.withValues(alpha: 0.4) : Colors.white.withValues(alpha: 0.4),
         title: Text('$specialtyName - ডিরেক্টরি', style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
         iconTheme: IconThemeData(color: isDarkMode ? Colors.white : Colors.black),
         elevation: 0,
@@ -248,12 +247,12 @@ class AdminDoctorListScreen extends StatelessWidget {
                           child: Card(
                             margin: const EdgeInsets.only(bottom: 12),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                            color: isDarkMode ? Colors.white.withOpacity(0.05) : Colors.white,
+                            color: isDarkMode ? Colors.white.withValues(alpha: 0.05) : Colors.white,
                             elevation: isDarkMode ? 0 : 2,
                             child: ListTile(
                               contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                               leading: CircleAvatar(
-                                backgroundColor: Colors.blueAccent.withOpacity(0.1),
+                                backgroundColor: Colors.blueAccent.withValues(alpha: 0.1),
                                 child: const Icon(Icons.person, color: Colors.blueAccent),
                               ),
                               title: Text(

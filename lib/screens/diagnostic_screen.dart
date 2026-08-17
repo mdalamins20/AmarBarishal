@@ -79,7 +79,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -96,7 +96,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                           Container(
                             padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF0F4C81).withOpacity(0.1),
+                              color: const Color(0xFF0F4C81).withValues(alpha: 0.1),
                               shape: BoxShape.circle,
                             ),
                             child: const Icon(Icons.local_hospital, color: Color(0xFF0F4C81), size: 24),

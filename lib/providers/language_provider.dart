@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:translator/translator.dart';
 
 class LanguageProvider extends ChangeNotifier {
   String _languageCode = 'bn';
-  final GoogleTranslator _googleTranslator = GoogleTranslator();
   final Map<String, String> _dynamicTranslationCache = {};
 
   String get languageCode => _languageCode;
@@ -29,23 +27,10 @@ class LanguageProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Dynamic async translator block
+  // Dynamic async translator block (Disabled to prevent API rate limits)
   Future<String> translateDynamic(String text) async {
-    if (text.isEmpty || !isEnglish) return text;
-    
-    if (_dynamicTranslationCache.containsKey(text)) {
-      return _dynamicTranslationCache[text]!;
-    }
-    
-    try {
-      final translation = await _googleTranslator.translate(text, from: 'bn', to: 'en');
-      // Fix some common capitalization issues or formatting if necessary
-      String result = translation.text;
-      _dynamicTranslationCache[text] = result;
-      return result;
-    } catch (e) {
-      return text; // Return original if fails (no internet)
-    }
+    // Return original text immediately as runtime translation is disabled
+    return text;
   }
 
   static const Map<String, String> _bn = {

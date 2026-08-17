@@ -5,11 +5,9 @@ import 'notification_screen.dart';
 import 'sos_list_screen.dart';
 import 'map_screen.dart';
 import 'profile_screen.dart';
-import '../widgets/auto_translated_text.dart';
 
 class MainScreen extends StatefulWidget {
-  final VoidCallback onThemeChanged;
-  const MainScreen({super.key, required this.onThemeChanged});
+  const MainScreen({super.key});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -24,7 +22,7 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     super.initState();
     _screens = [
-      HomeScreen(onThemeChanged: widget.onThemeChanged),
+      const HomeScreen(),
       const NotificationScreen(),
       const SosListScreen(),
       const MapScreen(),

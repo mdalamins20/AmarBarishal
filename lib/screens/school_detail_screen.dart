@@ -61,7 +61,7 @@ class SchoolDetailScreen extends StatelessWidget {
             child: Container(color: Colors.transparent),
           ),
         ),
-        backgroundColor: isDarkMode ? Colors.black.withOpacity(0.4) : Colors.white.withOpacity(0.4),
+        backgroundColor: isDarkMode ? Colors.black.withValues(alpha: 0.4) : Colors.white.withValues(alpha: 0.4),
         elevation: 0,
         title: AutoTranslatedText(
           name, 
@@ -90,15 +90,15 @@ class SchoolDetailScreen extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: isDarkMode ? Colors.indigo.shade900.withOpacity(0.3) : Colors.indigo.shade50,
+                    color: isDarkMode ? Colors.indigo.shade900.withValues(alpha: 0.3) : Colors.indigo.shade50,
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: isDarkMode ? Colors.indigoAccent.withOpacity(0.5) : Colors.indigo,
+                      color: isDarkMode ? Colors.indigoAccent.withValues(alpha: 0.5) : Colors.indigo,
                       width: 2
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.indigo.withOpacity(0.2),
+                        color: Colors.indigo.withValues(alpha: 0.2),
                         blurRadius: 20,
                         spreadRadius: 5,
                       )
@@ -196,7 +196,7 @@ class SchoolDetailScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         elevation: 8,
-                        shadowColor: Colors.indigo.withOpacity(0.5),
+                        shadowColor: Colors.indigo.withValues(alpha: 0.5),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -204,7 +204,7 @@ class SchoolDetailScreen extends StatelessWidget {
                           Container(
                             padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
+                              color: Colors.white.withValues(alpha: 0.2),
                               shape: BoxShape.circle,
                             ),
                             child: const Icon(Icons.call_rounded, size: 28),

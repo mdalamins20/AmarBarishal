@@ -117,7 +117,7 @@ class _EditAboutMeScreenState extends State<EditAboutMeScreen> with SingleTicker
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accentColor = const Color(0xFF6C63FF);
+    const accentColor = Color(0xFF6C63FF);
 
     return Scaffold(
       backgroundColor: isDark ? const Color(0xFF0F1219) : const Color(0xFFF4F6FA),
@@ -148,7 +148,7 @@ class _EditAboutMeScreenState extends State<EditAboutMeScreen> with SingleTicker
                     top: -80, right: -60,
                     child: Container(
                       width: 250, height: 250,
-                      decoration: BoxDecoration(shape: BoxShape.circle, color: accentColor.withOpacity(0.12)),
+                      decoration: BoxDecoration(shape: BoxShape.circle, color: accentColor.withValues(alpha: 0.12)),
                     ),
                   ),
                   Padding(
@@ -159,10 +159,10 @@ class _EditAboutMeScreenState extends State<EditAboutMeScreen> with SingleTicker
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
                           decoration: BoxDecoration(
-                            color: accentColor.withOpacity(0.15),
+                            color: accentColor.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(30),
                           ),
-                          child: Text(
+                          child: const Text(
                             'প্রোফাইল আপডেট',
                             style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: accentColor, letterSpacing: 0.5),
                           ),
@@ -221,14 +221,14 @@ class _EditAboutMeScreenState extends State<EditAboutMeScreen> with SingleTicker
                           width: double.infinity,
                           height: 58,
                           child: _isLoading 
-                             ? Center(child: CircularProgressIndicator(color: accentColor))
+                             ? const Center(child: CircularProgressIndicator(color: accentColor))
                              : ElevatedButton(
                                  onPressed: _saveData,
                                  style: ElevatedButton.styleFrom(
                                    backgroundColor: accentColor,
                                    foregroundColor: Colors.white,
                                    elevation: 8,
-                                   shadowColor: accentColor.withOpacity(0.4),
+                                   shadowColor: accentColor.withValues(alpha: 0.4),
                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
                                  ),
                                  child: const Row(
@@ -261,7 +261,7 @@ class _EditAboutMeScreenState extends State<EditAboutMeScreen> with SingleTicker
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E2533) : Colors.white,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(isDark ? 0.25 : 0.05), blurRadius: 20, offset: const Offset(0, 6))],
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.05), blurRadius: 20, offset: const Offset(0, 6))],
       ),
       child: Column(children: children),
     );

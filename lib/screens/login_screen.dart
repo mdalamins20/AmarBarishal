@@ -74,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Container(color: Colors.transparent),
           ),
         ),
-        backgroundColor: isDarkMode ? Colors.black.withOpacity(0.4) : Colors.white.withOpacity(0.4),
+        backgroundColor: isDarkMode ? Colors.black.withValues(alpha: 0.4) : Colors.white.withValues(alpha: 0.4),
         title: Text('অ্যাডমিন লগইন', style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
         iconTheme: IconThemeData(color: isDarkMode ? Colors.white : Colors.black),
         elevation: 0,
@@ -114,7 +114,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.blueAccent.withOpacity(0.3),
+                                color: Colors.blueAccent.withValues(alpha: 0.3),
                                 blurRadius: 20,
                                 spreadRadius: 5,
                               )
@@ -157,15 +157,15 @@ class _LoginScreenState extends State<LoginScreen> {
                           borderRadius: BorderRadius.circular(24),
                           gradient: LinearGradient(
                             colors: isDarkMode 
-                              ? [Colors.white.withOpacity(0.1), Colors.white.withOpacity(0.05)]
-                              : [Colors.white.withOpacity(0.8), Colors.white.withOpacity(0.5)],
+                              ? [Colors.white.withValues(alpha: 0.1), Colors.white.withValues(alpha: 0.05)]
+                              : [Colors.white.withValues(alpha: 0.8), Colors.white.withValues(alpha: 0.5)],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           ),
                           border: Border.all(color: isDarkMode ? Colors.white24 : Colors.white, width: 2),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
+                              color: Colors.black.withValues(alpha: 0.1),
                               blurRadius: 20,
                               spreadRadius: 5,
                             )
@@ -187,7 +187,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     labelStyle: TextStyle(color: isDarkMode ? Colors.white70 : Colors.black54),
                                     prefixIcon: Icon(Icons.email_rounded, color: isDarkMode ? Colors.white70 : Colors.black54),
                                     filled: true,
-                                    fillColor: isDarkMode ? Colors.black26 : Colors.white.withOpacity(0.5),
+                                    fillColor: isDarkMode ? Colors.black26 : Colors.white.withValues(alpha: 0.5),
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(15),
                                       borderSide: BorderSide.none,
@@ -207,7 +207,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     labelStyle: TextStyle(color: isDarkMode ? Colors.white70 : Colors.black54),
                                     prefixIcon: Icon(Icons.lock_rounded, color: isDarkMode ? Colors.white70 : Colors.black54),
                                     filled: true,
-                                    fillColor: isDarkMode ? Colors.black26 : Colors.white.withOpacity(0.5),
+                                    fillColor: isDarkMode ? Colors.black26 : Colors.white.withValues(alpha: 0.5),
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(15),
                                       borderSide: BorderSide.none,
@@ -221,9 +221,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                   Container(
                                     padding: const EdgeInsets.all(12),
                                     decoration: BoxDecoration(
-                                      color: Colors.red.withOpacity(0.1),
+                                      color: Colors.red.withValues(alpha: 0.1),
                                       borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(color: Colors.red.withOpacity(0.5)),
+                                      border: Border.all(color: Colors.red.withValues(alpha: 0.5)),
                                     ),
                                     child: Row(
                                       children: [

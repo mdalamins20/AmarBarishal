@@ -105,7 +105,7 @@ class GlobalSearchDelegate extends SearchDelegate {
         }
 
         if (snapshot.hasError || !snapshot.hasData) {
-          return Center(
+          return const Center(
             child: AutoTranslatedText('ডাটা লোড করতে সমস্যা হয়েছে!', style: TextStyle(color: Colors.red)),
           );
         }
@@ -195,7 +195,7 @@ class GlobalSearchDelegate extends SearchDelegate {
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.04),
+                  color: Colors.black.withValues(alpha: 0.04),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 )
@@ -216,7 +216,7 @@ class GlobalSearchDelegate extends SearchDelegate {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: iconColor.withOpacity(0.15),
+                          color: iconColor.withValues(alpha: 0.15),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(icon, color: iconColor, size: 24),

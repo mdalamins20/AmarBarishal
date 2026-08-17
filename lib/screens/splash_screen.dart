@@ -4,8 +4,7 @@ import 'main_screen.dart';
 import '../services/notification_service.dart';
 
 class SplashScreen extends StatefulWidget {
-  final VoidCallback onThemeChanged;
-  const SplashScreen({super.key, required this.onThemeChanged});
+  const SplashScreen({super.key});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -28,8 +27,7 @@ class _SplashScreenState extends State<SplashScreen> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                  MainScreen(onThemeChanged: widget.onThemeChanged),
+              builder: (context) => const MainScreen(),
             ),
           );
         },
