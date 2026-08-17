@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import '../widgets/auto_translated_text.dart';
 import 'news_detail_screen.dart';
@@ -27,20 +26,33 @@ class _NewsListScreenState extends State<NewsListScreen> {
 
   Future<List<Map<String, dynamic>>> _fetchNewsApi() async {
     try {
-      String url = 'http://192.168.0.246:8000/api/news?source_id=${widget.sourceId}';
+      final snapshot = await FirebaseFirestore.instance
+          .collection('categories')
+          .doc('newspaper')
+          .collection('items')
+          .where('source', isEqualTo: widget.sourceName)
+          .get();
+
+      List<Map<String, dynamic>> newsList = snapshot.docs.map((doc) => doc.data()).toList();
+      
+      // Sort by timestamp descending
+      newsList.sort((a, b) {
+        final timestampA = a['timestamp'] as Timestamp?;
+        final timestampB = b['timestamp'] as Timestamp?;
+        if (timestampA == null || timestampB == null) return 0;
+        return timestampB.compareTo(timestampA);
+      });
+      
       if (_selectedDate != null) {
         final dateStr = "${_selectedDate!.year}-${_selectedDate!.month.toString().padLeft(2, '0')}-${_selectedDate!.day.toString().padLeft(2, '0')}";
-        url += '&date=$dateStr';
+        newsList = newsList.where((item) {
+          return (item['date'] ?? '').toString().contains(dateStr);
+        }).toList();
       }
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        if (data['status'] == 'success') {
-          return List<Map<String, dynamic>>.from(data['data']);
-        }
-      }
+      
+      return newsList;
     } catch (e) {
-      debugPrint("Error fetching news api: $e");
+      debugPrint("Error fetching news from Firebase: $e");
     }
     return [];
   }

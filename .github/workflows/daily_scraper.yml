@@ -27,8 +27,14 @@ jobs:
         pip install -r requirements.txt
 
     - name: Create serviceAccountKey.json
+      env:
+        FIREBASE_SECRET: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
       run: |
-        echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > scraper_scripts/serviceAccountKey.json
+        if [ -z "$FIREBASE_SECRET" ]; then
+          echo "Error: FIREBASE_SERVICE_ACCOUNT secret is empty or not set in GitHub."
+          exit 1
+        fi
+        echo "$FIREBASE_SECRET" > scraper_scripts/serviceAccountKey.json
 
     - name: Run News Scraper
       run: |
