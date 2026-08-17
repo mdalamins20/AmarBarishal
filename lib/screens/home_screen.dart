@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:my_barishal_new/screens/category_detail_screen.dart';
 import 'package:my_barishal_new/screens/upazila_list_screen.dart';
-import 'package:my_barishal_new/screens/news_source_screen.dart';
+import 'package:my_barishal_new/screens/news_list_screen.dart';
 import 'package:my_barishal_new/screens/sos_list_screen.dart';
 import 'package:my_barishal_new/screens/specialist_list_screen.dart';
 import '../widgets/auto_translated_text.dart';
@@ -275,7 +275,11 @@ class _HomeScreenState extends State<HomeScreen> {
     if (categoryName == "উপজেলা পরিচিতি" || categoryId == 'upazila') {
       Navigator.push(context, MaterialPageRoute(builder: (context) => UpazilaListScreen(categoryId: categoryId, categoryTitle: categoryName)));
     } else if (categoryId == 'news' || categoryName == 'পত্রিকা') {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => const NewsSourceScreen()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const NewsListScreen(
+        sourceId: 'all',
+        sourceName: 'সকল খবর',
+        color: Color(0xFF0F4C81),
+      )));
     } else if (categoryId == 'sos') {
       Navigator.push(context, MaterialPageRoute(builder: (context) => const SosListScreen()));
     } else if (categoryId == 'doctor') {
@@ -610,8 +614,8 @@ class _HomeScreenState extends State<HomeScreen> {
       {'id': 'doctor', 'name': 'ডাক্তার', 'icon': Icons.health_and_safety, 'color': secondaryColor},
       {'id': 'diagnostic', 'name': 'ডায়াগনস্টিক', 'icon': Icons.biotech, 'color': secondaryColor},
       {'id': 'busTicket', 'name': 'বাসের টিকেট', 'icon': Icons.directions_bus, 'color': const Color(0xFFFF6B35)},
-      {'id': 'highSchool', 'name': 'হাই স্কুল', 'icon': Icons.school, 'color': primaryColor},
-      {'id': 'college', 'name': 'কলেজ', 'icon': Icons.account_balance, 'color': primaryColor},
+      {'id': 'news', 'name': 'পত্রিকা', 'icon': Icons.newspaper, 'color': primaryColor},
+      {'id': 'college', 'name': 'শিক্ষা', 'icon': Icons.account_balance, 'color': primaryColor},
       {'id': 'hotel', 'name': 'হোটেল', 'icon': Icons.hotel, 'color': const Color(0xFF8E24AA)},
       {'id': 'all', 'name': 'সকল সেবা', 'icon': Icons.grid_view, 'color': const Color(0xFF0F4C81)},
     ];

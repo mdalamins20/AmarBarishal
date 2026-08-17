@@ -30,11 +30,16 @@ class _NewsListScreenState extends State<NewsListScreen> {
           .collection('categories')
           .doc('newspaper')
           .collection('items')
-          .where('source', isEqualTo: widget.sourceName)
           .get();
 
       List<Map<String, dynamic>> newsList = snapshot.docs.map((doc) => doc.data()).toList();
       
+      // Filter out news without images
+      newsList = newsList.where((item) {
+        final img = item['image_url'];
+        return img != null && img.toString().trim().isNotEmpty;
+      }).toList();
+
       // Sort by timestamp descending
       newsList.sort((a, b) {
         final timestampA = a['timestamp'] as Timestamp?;

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../widgets/auto_translated_text.dart';
 import 'category_detail_screen.dart';
 import 'upazila_list_screen.dart';
-import 'news_source_screen.dart';
+import 'news_list_screen.dart';
 import 'diagnostic_screen.dart';
 import 'specialist_list_screen.dart';
 
@@ -13,7 +13,11 @@ class AllServicesScreen extends StatelessWidget {
     if (categoryName == "উপজেলা পরিচিতি" || categoryId == 'upazila') {
       Navigator.push(context, MaterialPageRoute(builder: (context) => UpazilaListScreen(categoryId: categoryId, categoryTitle: categoryName)));
     } else if (categoryId == 'news' || categoryName == 'পত্রিকা') {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => const NewsSourceScreen()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const NewsListScreen(
+        sourceId: 'all',
+        sourceName: 'সকল খবর',
+        color: Color(0xFF8E24AA),
+      )));
     } else if (categoryId == 'doctor') {
       Navigator.push(context, MaterialPageRoute(builder: (context) => SpecialistListScreen(categoryTitle: categoryName, categoryDocId: categoryId)));
     } else if (categoryId == 'diagnostic') {
